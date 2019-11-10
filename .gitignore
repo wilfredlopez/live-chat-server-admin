@@ -21,3 +21,4 @@ yarn-error.log*
 live-chat-admin/node_modules/
 src/myconfig.ts
 ormconfig.json
+now.json

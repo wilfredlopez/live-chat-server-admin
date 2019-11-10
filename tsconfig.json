@@ -14,5 +14,5 @@
     "sourceMap": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "admin-client"]
+  "exclude": ["node_modules", "chat-plugin", "live-chat-admin"]
 }

@@ -104,7 +104,7 @@ const app = async () => {
     pubSub: pubsub,
     // resolvers: [__dirname + "/resolvers/**/*.ts"],
     authChecker: customAuthChecker,
-    emitSchemaFile: true,
+    // emitSchemaFile: true,
 
     // or create the file with schema in selected path
   })

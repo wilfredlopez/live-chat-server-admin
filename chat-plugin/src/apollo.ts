@@ -7,9 +7,10 @@ import { split, ApolloLink } from "apollo-link"
 
 import { getMainDefinition } from "apollo-utilities"
 import { setContext } from "apollo-link-context"
+import config from "./config"
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4500/subscriptions`,
+  uri: config.APOLLO_SUBSCRIPTIONS_URI,
   options: {
     reconnect: true,
   },
@@ -17,7 +18,7 @@ const wsLink = new WebSocketLink({
 
 const cache = new InMemoryCache({})
 const link = new HttpLink({
-  uri: "http://localhost:4500/graphql",
+  uri: config.APOLLO_HTTP_URI,
   credentials: "include",
 })
 
