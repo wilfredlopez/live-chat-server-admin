@@ -118,7 +118,7 @@ span.messageFromServer {
 .chat_container_div {
   position: absolute;
   bottom: 0px;
-  z-index: 2;
+  z-index: 2000;
   will-change: opacity;
   backface-visibility: hidden;
   right: 6px;

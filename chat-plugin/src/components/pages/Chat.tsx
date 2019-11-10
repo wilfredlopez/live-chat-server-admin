@@ -1,4 +1,4 @@
-import { Typography } from "@material-ui/core"
+import { Typography, Button } from "@material-ui/core"
 import React, { useContext } from "react"
 
 import ChatBox from "../Chat/ChatBox"
@@ -23,11 +23,13 @@ interface Props {
   userId: string
   channelId: string
   susbcriptionLoading?: boolean
+  close: () => void
 }
 
 const Chat: React.FC<Props> = ({
   userId,
   channelId,
+  close,
   susbcriptionLoading = false,
 }) => {
   // const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation()
@@ -80,9 +82,21 @@ const Chat: React.FC<Props> = ({
   return (
     <div className="chat-container-class">
       {/* <Container maxWidth="sm"> */}
-      <Typography component="h1" variant="h4" align="center">
-        Chat
-      </Typography>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          padding: "0.5rem 0",
+        }}
+      >
+        <Typography component="h1" variant="h4" align="center">
+          Chat
+        </Typography>
+        <div></div>
+        <Button onClick={close} title="Close" size="small" variant="outlined">
+          X
+        </Button>
+      </div>
       {susbcriptionLoading && (
         <Typography component="h2" variant="body2" align="center">
           Thanks for chatting. How can i help?

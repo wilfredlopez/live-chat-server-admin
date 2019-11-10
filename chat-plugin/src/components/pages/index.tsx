@@ -102,6 +102,7 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
           userId={me.data.guestMe.id}
           channelId={me.data.guestMe.channelId}
           susbcriptionLoading={loading}
+          close={() => setOpen(c => !c)}
         />{" "}
         {chatIconComponent}
       </>
