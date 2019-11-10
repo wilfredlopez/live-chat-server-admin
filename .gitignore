@@ -6,8 +6,7 @@ build/
 ./dist/
 tmp/
 temp/
-now.json
-public/
+
 
 # misc
 .DS_Store

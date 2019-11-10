@@ -2,11 +2,11 @@ import { ApolloServer } from "apollo-server-express"
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import cors, { CorsOptions } from "cors"
-import express from "express"
-// import path from "path"
+import express, { Request, Response } from "express"
+import path from "path"
 import { buildSchema } from "type-graphql"
 import { createConnection } from "typeorm"
-// import config from "./config"
+
 import createBulkProducts from "./customRoutes/createBulkProducts"
 import { userLoader } from "./dataloaders/dataloaders"
 import { authMiddleware } from "./midleware/authMidleware"
@@ -127,12 +127,12 @@ const app = async () => {
 
   //  FONTEND-CLIENT CODE ****************************
   //serving static files from  frontend
-  // app.use(
-  //   "/static",
-  //   express.static(
-  //     path.join(__dirname, "..", "admin-client", "build", "static"),
-  //   ),
-  // )
+  app.use(
+    "/static",
+    express.static(
+      path.join(__dirname, "..", "live-chat-admin", "build", "static"),
+    ),
+  )
 
   //serving frontend folder
   // app.use(
@@ -142,11 +142,11 @@ const app = async () => {
 
   // app.use("/public", express.static(path.join(__dirname, "..", "static")))
 
-  // app.get("*", (req: Request, res: Response) => {
-  //   res.sendFile(
-  //     path.join(__dirname, "..", "admin-client", "build", "index.html"),
-  //   )
-  // })
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(
+      path.join(__dirname, "..", "live-chat-admin", "build", "index.html"),
+    )
+  })
 
   //************************ */
 

@@ -50,9 +50,9 @@
     "admin-client/node_modules"
   ],
   "scripts": {
-    "build": "rimraf public/ && tsc",
-    "start": "node public/index.js",
-    "build-client": "cd admin-client/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
+    "build": "rimraf dist/ && tsc",
+    "start": "node dist/index.js",
+    "build-client": "cd live-chat-admin/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
     "heroku-postbuild": "npm run build && npm run build-client",
     "dev": "ts-node-dev src/index.ts",
     "typeorm:create": "ts-node run typeorm migration:create -n"
