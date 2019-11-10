@@ -23,4 +23,10 @@ https://github.com/typeorm/typeorm
 
     The Original files are being ignored by GIT to avoid personal informatiom being online.
 
-For More About Me Please Visit (WilfredLopez.Net)[https://www.wilfredlopez.net]
+For More About Me Please Visit [WilfredLopez.Net!](https://www.wilfredlopez.net)
+
+```javascript
+if (isAwesome) {
+  return true
+}
+```

@@ -1,0 +1,272 @@
+html,
+body {
+  font-family: "Roboto Slab", "Helvetica Neue", "Helevetica", "Arial",
+    "sans-serif";
+  color: #2c3e50;
+  height: 100%;
+}
+
+.flex-1 {
+  flex: 1 1 0;
+}
+
+.flex-2 {
+  flex: 2;
+}
+.flex-3 {
+  flex: 3;
+}
+
+.row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #eb5454;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none;
+  color: #eb5454;
+}
+
+.button {
+  text-align: center;
+}
+
+.button-primary {
+  padding: 0.6em 1.2em;
+  background: #215fe4;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.button-primary:hover,
+.button-primary:focus {
+  background: #eb5454;
+  color: #ffffff;
+}
+
+/* ======================================= */
+/* Home Page */
+/* ======================================= */
+
+main.home {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+main.home img.logo {
+  width: 100%;
+  max-width: 400px;
+}
+
+main.home h3.title {
+  color: #969696;
+  font-weight: 100;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+main.home .button.login,
+main.home .button.signup,
+.button.github {
+  padding-top: 1.2em;
+  padding-bottom: 1.2em;
+}
+
+.button.github {
+  background: #555555;
+}
+.button.github:hover {
+  background: #eb5454;
+}
+
+main.home .button.login {
+  background: none;
+  border: 2px solid #cfcfcf;
+  color: #999;
+}
+
+main.home .button.login:hover,
+main.home .button.login:focus {
+  background: none;
+  border: 2px solid #1f6ed6;
+  color: #1347d5;
+}
+
+/* ======================================= */
+/* Signup and Login */
+/* ======================================= */
+
+main.login fieldset {
+  padding: 10px 0;
+}
+
+main.login fieldset input {
+  width: 100%;
+  padding: 1.4em 0.7em;
+}
+
+main.login .button-primary {
+  padding-top: 1.2em;
+  padding-bottom: 1.2em;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.button-primary:disabled {
+  background: #969696;
+}
+
+/* ======================================= */
+/* Chat App */
+/* ======================================= */
+
+#app {
+  height: 100%;
+}
+
+/* Header */
+header.title-bar {
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+header.title-bar img.logo {
+  width: 100%;
+  max-width: 140px;
+}
+
+header.title-bar span.title {
+  color: #f5eded;
+  font-weight: 100;
+  text-transform: uppercase;
+  font-size: 1.2em;
+  margin-left: 7px;
+}
+
+/* User List Sidebar */
+
+aside.sidebar {
+  background: #f8f8f8;
+  max-width: 340px;
+  padding: 15px;
+  border-right: 1px solid #f1f1f1;
+}
+
+aside.sidebar .online-count {
+  color: #2244d8;
+  margin-right: 5px;
+}
+
+aside.sidebar h4 {
+  margin: 0 0 20px 0;
+  color: #c3c3c3;
+}
+
+aside.sidebar .user-list {
+  overflow-y: scroll;
+}
+
+aside.sidebar li {
+  margin: 15px 0;
+}
+
+aside.sidebar li > a {
+  color: #555555;
+}
+
+aside.sidebar li > a:hover > span,
+aside.sidebar li > a:focus > span {
+  color: #1357d5;
+}
+
+aside.sidebar img.avatar {
+  border-radius: 100%;
+  height: 45px;
+  width: 45px;
+  margin-right: 10px;
+}
+
+aside.sidebar .username {
+  position: absolute;
+  line-height: 45px;
+}
+
+/* Main Chat */
+main.flex {
+  height: 100%;
+}
+
+main.chat {
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+main.chat img.avatar {
+  border-radius: 100%;
+  height: 45px;
+  width: 45px;
+  flex: none;
+}
+
+main.chat .message {
+  flex: 0 0 auto;
+}
+
+main.chat .message img.avatar {
+  margin-right: 10px;
+}
+
+main.chat .message p.message-header {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+main.chat .message p.message-header span.sent-date {
+  color: #969696;
+  padding-left: 10px;
+}
+
+/* Send Message Form */
+
+#app form {
+  min-height: 60px;
+  padding: 10px 20px;
+}
+
+#app form input {
+  height: auto !important;
+}
+
+#send-message button {
+  margin-left: 5px;
+}
+
+[v-cloak] {
+  display: none;
+}
+
+.message-wrapper {
+  padding-left: 2rem;
+}
+
+.formButtonContainer {
+  position: absolute;
+  width: 100%;
+  /* top: 83vh; */
+
+  margin: auto;
+  max-width: 320px;
+  max-height: 201px;
+  bottom: 100px;
+  right: 0;
+  padding: 0 10px;
+  margin: 0 5%;
+}
