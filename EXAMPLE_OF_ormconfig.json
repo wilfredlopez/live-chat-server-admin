@@ -1,0 +1,18 @@
+{
+  "url": "mongodb+srv://<USER>:<PASSWORD>@cluster0-ef6nu.mongodb.net/<DB_NAME>",
+  "type": "mongodb",
+  "port": 27017,
+  "database": "typeormtest",
+  "synchronize": true,
+  "logging": true,
+  "useUnifiedTopology": true,
+  "useNewUrlParser": true,
+  "entities": ["src/entity/**/*.*"],
+  "migrations": ["src/migration/**/*.*"],
+  "subscribers": ["src/subscriber/**/*.*"],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/migration",
+    "subscribersDir": "src/subscriber"
+  }
+}
