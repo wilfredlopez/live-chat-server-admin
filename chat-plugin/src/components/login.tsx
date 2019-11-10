@@ -91,7 +91,7 @@ const Login: React.FC<ILoginFormProps> = props => {
                             cache.writeQuery({
                               query: guestMeQuery,
                               data: {
-                                me: {
+                                guestMe: {
                                   __typename: "Guest",
                                   avatar: data.registerGuestOrLogin.avatar,
                                   email: data.registerGuestOrLogin.email,

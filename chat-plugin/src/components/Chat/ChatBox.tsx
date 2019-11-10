@@ -1,16 +1,22 @@
 import React, { useState, useRef, useLayoutEffect } from "react"
 
 import { Avatar, Card, Input } from "@material-ui/core"
-import "./chat.css"
-import "./base.css"
-import { Imessage } from "../../pages/Chat"
+
+import { Imessage } from "../context/messagesContext"
+
 interface Props {
   messages: Imessage[]
   disabled: boolean
-  sendMessage: (event: React.FormEvent<HTMLFormElement>, text: string) => void
+  handleMessage: (event: React.FormEvent<HTMLFormElement>, text: string) => void
+  currentUserId: string
 }
 
-const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
+const ChatBox: React.FC<Props> = ({
+  messages,
+  disabled,
+  handleMessage,
+  currentUserId,
+}) => {
   const [text, setText] = useState<string>("")
   let chatEl = useRef<HTMLDivElement | null>(null)
 
@@ -54,13 +60,32 @@ const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
                       <span className="username font-600">
                         {message.user && message.user.email}
                       </span>
+                      <br />
                       <span className="sent-date font-300">
-                        {message.date.toString()}
+                        {/* {new Date(message.date).toDateString()} */}
+                        {new Intl.DateTimeFormat("en-us", {
+                          year: "numeric",
+                          month: "numeric",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                          second: "numeric",
+                          hour12: true,
+
+                          timeZone: "America/New_York",
+                          // timeZone: "America/Los_Angeles",
+                        }).format(new Date(message.date))}
                         {/* {moment(message.createdAt).format("MMM Do, hh:mm:ss")} */}
                       </span>
                     </p>
                     <p className="message-content font-300">
-                      {message.message}
+                      {message.user && message.user.id === currentUserId ? (
+                        <span className="messageFromMe">{message.message}</span>
+                      ) : (
+                        <span className="messageFromServer">
+                          {message.message}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -72,7 +97,7 @@ const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
         <div className="formButtonContainer">
           <form
             onSubmit={e => {
-              sendMessage(e, text)
+              handleMessage(e, text)
               setText("")
             }}
             className="flex flex-row flex-space-between sm-px-0"

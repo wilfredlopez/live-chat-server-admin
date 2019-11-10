@@ -5,8 +5,10 @@ import { CssBaseline } from "@material-ui/core"
 import theme from "./theme"
 import { ApolloProvider } from "react-apollo"
 import client from "./apollo"
+import "./css/chat.css"
+import "./css/base.css"
 
-import Index from "./pages"
+import Index from "./components/pages"
 import Layout from "./components/Layout"
 
 const App: React.FC = () => {
