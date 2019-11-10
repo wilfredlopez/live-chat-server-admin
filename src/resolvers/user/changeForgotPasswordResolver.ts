@@ -12,18 +12,19 @@ import bcrypt from "bcryptjs"
 import { MyContext } from "../../schema/MyContext"
 // import { v4 } from "uuid"
 import jwt from "jsonwebtoken"
-import config from "../../myconfig"
+
 // import { forgetPasswordPrefix } from "../../constants/redixPrefixes"
 import sendEmail from "../../utils/sendEmail"
 import { createToken } from "../../utils/createToken"
 import { ObjectID } from "bson"
 import { SendCookies } from "../../utils/sendCookies"
+import { JWT_SECRET, FRONTEND_URL } from "../../utils/env"
 
 let secret: string
 if (process.env.NODE_ENV === "production") {
   secret = process.env.JWT_SECRET as any
 } else {
-  secret = config.JWT_SECRET
+  secret = JWT_SECRET!
 }
 
 @InputType()
@@ -105,7 +106,7 @@ export class ChangeForgotPasswordResolver {
 
     await sendEmail({
       to: email,
-      url: `${config.FRONTEND_URL}/user/change-password/${jwtToken}`,
+      url: `${FRONTEND_URL}/user/change-password/${jwtToken}`,
     })
 
     return true

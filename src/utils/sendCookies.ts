@@ -1,4 +1,3 @@
-import { MyContext } from "../schema/MyContext"
 import { Response } from "express"
 
 const hour = 3600000

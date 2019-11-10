@@ -1,6 +1,6 @@
-import config from "../myconfig"
 import { User } from "../entity/User"
 import { sign } from "jsonwebtoken"
+import { JWT_SECRET, FRONTEND_URL } from "./env"
 
 export const createConfirmationUrl = async (
   userId: string,
@@ -8,7 +8,7 @@ export const createConfirmationUrl = async (
   const user = await User.findOneOrFail({ id: userId })
   const token = sign(
     { userId: userId, email: user.email, count: user.count },
-    config.JWT_SECRET,
+    JWT_SECRET!,
     {
       expiresIn: "1day",
     },
@@ -17,5 +17,5 @@ export const createConfirmationUrl = async (
   user.token = token
 
   await user.save()
-  return `${config.FRONTEND_URL}/user/confirm/${token}`
+  return `${FRONTEND_URL}/user/confirm/${token}`
 }

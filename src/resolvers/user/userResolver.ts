@@ -4,10 +4,10 @@ import { User, UserInputType, UserLoginInput } from "../../entity/User"
 import { MyContext } from "../../schema/MyContext"
 import { createToken } from "../../utils/createToken"
 import { verify } from "jsonwebtoken"
-import config from "../../myconfig"
 import { SendCookies } from "../../utils/sendCookies"
 import { ObjectID } from "bson"
-import { MongoRepository, getMongoRepository } from "typeorm"
+import { getMongoRepository } from "typeorm"
+import { JWT_SECRET } from "../../utils/env"
 
 @Resolver(User)
 export class UserResolver {
@@ -204,7 +204,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async confirmUser(@Arg("token") token: string): Promise<Boolean> {
-    const verified = (await verify(token, config.JWT_SECRET)) as any
+    const verified = verify(token, JWT_SECRET!) as any
 
     if (!verified.userId) {
       return false

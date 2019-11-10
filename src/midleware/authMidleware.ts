@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express"
 import { verify } from "jsonwebtoken"
-import config from "../myconfig"
 import { User } from "../entity/User"
 import { createToken, createGuestToken } from "../utils/createToken"
 import { SendCookies } from "../utils/sendCookies"
 import { Guest } from "../entity/Guest"
+import { JWT_SECRET } from "../utils/env"
 
 export const authMiddleware = async function(
   req: Request,
@@ -22,7 +22,7 @@ export const authMiddleware = async function(
     }
 
     try {
-      const data = await verify(accessToken, config.JWT_SECRET)
+      const data = await verify(accessToken, JWT_SECRET!)
 
       // console.log(data)
 
@@ -34,7 +34,7 @@ export const authMiddleware = async function(
 
       next()
     } catch (error) {
-      const data = (await verify(refreshToken, config.JWT_SECRET)) as any
+      const data = (await verify(refreshToken, JWT_SECRET!)) as any
 
       let user: User | Guest = await User.findOneOrFail(data.userId)
       // let user: User = await User.findOneOrFail(data.userId)

@@ -3,28 +3,27 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import cors, { CorsOptions } from "cors"
 import express, { Request, Response } from "express"
+// import { redis } from "./redis";
+// import connectRedis from "connect-redis";
+import { execute, subscribe } from "graphql"
+import { PubSub } from "graphql-subscriptions"
+import { createServer } from "http"
 import path from "path"
+import { SubscriptionServer } from "subscriptions-transport-ws"
 import { buildSchema } from "type-graphql"
 import { createConnection } from "typeorm"
-
 import createBulkProducts from "./customRoutes/createBulkProducts"
 import { userLoader } from "./dataloaders/dataloaders"
 import { authMiddleware } from "./midleware/authMidleware"
+import ChannelResolver from "./resolvers/channels/channelResolver"
 import FilesResolver from "./resolvers/fileUpload/fileUploadResolver"
+import GuestResolver from "./resolvers/Guest/guestResolver"
+import MessageResolver from "./resolvers/message/messageResolver"
 import ChangeForgotPasswordResolver from "./resolvers/user/changeForgotPasswordResolver"
 import { customAuthChecker } from "./resolvers/user/customAuthChecket"
 import UserResolver from "./resolvers/user/userResolver"
 import { MyContext } from "./schema/MyContext"
-import ChannelResolver from "./resolvers/channels/channelResolver"
-import { PubSub } from "graphql-subscriptions"
-import { SubscriptionServer } from "subscriptions-transport-ws"
-import { createServer } from "http"
-// import { redis } from "./redis";
-// import connectRedis from "connect-redis";
-import { execute, subscribe } from "graphql"
-import MessageResolver from "./resolvers/message/messageResolver"
-import GuestResolver from "./resolvers/Guest/guestResolver"
-import config from "./myconfig"
+import { DATABASE_NAME, MONGO_URL } from "./utils/env"
 
 // const RedisStore = connectRedis(session);
 
@@ -59,10 +58,9 @@ const app = async () => {
   )
   app.use(bodyParser.json())
 
-  const dbName = process.env.DATABASE_NAME || "live-chat-server-dev"
-  const mongoUrl = process.env.MONGO_URL || config.MONGO_URL
+  // const dbName = process.env.DATABASE_NAME || "live-chat-server-dev"
 
-  const MongoURI = `${mongoUrl}/${dbName}`
+  const MongoURI = `${MONGO_URL}/${DATABASE_NAME}`
 
   await createConnection({
     name: "default",
@@ -70,7 +68,7 @@ const app = async () => {
     port: 27017,
     // port: parseInt(process.env.PORT || "27017", 10),
     url: MongoURI,
-    database: dbName,
+    database: DATABASE_NAME,
     synchronize: true,
     // dropSchema: true,
     logging: true,

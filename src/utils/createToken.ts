@@ -1,12 +1,13 @@
 import { User } from "../entity/User"
-import config from "../myconfig"
+
 import jwt from "jsonwebtoken"
 import { Guest } from "../entity/Guest"
+import { JWT_SECRET } from "./env"
 
 export const createToken = (user: User) => {
   const accessToken = jwt.sign(
     { userId: user.id, email: user.email },
-    config.JWT_SECRET,
+    JWT_SECRET!,
     {
       expiresIn: "30min",
     },
@@ -14,7 +15,7 @@ export const createToken = (user: User) => {
 
   const refreshToken = jwt.sign(
     { userId: user.id, count: user.count },
-    config.JWT_SECRET,
+    JWT_SECRET!,
     { expiresIn: "7days" },
   )
 
@@ -24,7 +25,7 @@ export const createToken = (user: User) => {
 export const createGuestToken = (guest: Guest) => {
   const accessToken = jwt.sign(
     { userId: guest.id, email: guest.email },
-    config.JWT_SECRET,
+    JWT_SECRET!,
     {
       expiresIn: "30min",
     },
@@ -32,7 +33,7 @@ export const createGuestToken = (guest: Guest) => {
 
   const refreshToken = jwt.sign(
     { userId: guest.id, count: guest.count },
-    config.JWT_SECRET,
+    JWT_SECRET!,
     { expiresIn: "7days" },
   )
 

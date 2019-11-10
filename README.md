@@ -3,8 +3,8 @@
 - apollo-server-express
 - typeorm (with MongoDB)
 - type-graphql
-- @google-cloud/storage
 - graphql-upload
+- subscriptions-transport-ws
 
 ## more about apollo server
 
@@ -19,9 +19,12 @@ https://typegraphql.ml/
 https://www.npmjs.com/package/typeorm
 https://github.com/typeorm/typeorm
 
-### Please create your own ormconfig.json and your config file under src/config.ts
+### Please create your own .env.development on the root project
 
-    The Original files are being ignored by GIT to avoid personal informatiom being online.
+DATABASE_NAME=YOUR_DATABASE_NAME
+JWT_SECRET=YOUR_SECRET
+FRONTEND_URL=http://localhost:3000
+MONGO_URL=mongodb+srv://<USER_NAME>:<PASSWORD>@cluster0-ef6nu.mongodb.net
 
 For More About Me Please Visit [WilfredLopez.Net!](https://www.wilfredlopez.net)
 
