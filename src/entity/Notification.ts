@@ -1,9 +1,7 @@
-import { ObjectType, Field, ID, FieldResolver, Root, Ctx } from "type-graphql"
+import { ObjectType, Field, ID } from "type-graphql"
 import { ObjectID } from "typeorm"
 import { User } from "./User"
 import { Guest } from "./Guest"
-import { MyContext } from "../schema/MyContext"
-import { ObjectId } from "bson"
 
 @ObjectType()
 export class Notification {

@@ -1,4 +1,4 @@
-import config from "../config"
+import config from "../myconfig"
 import { User } from "../entity/User"
 import { sign } from "jsonwebtoken"
 

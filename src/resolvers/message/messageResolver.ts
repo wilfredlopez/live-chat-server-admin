@@ -18,7 +18,7 @@ import { Message, MessageInputType } from "../../entity/Message"
 import { Notification, NotificationPayload } from "../../entity/Notification"
 import { MyContext } from "../../schema/MyContext"
 import { User } from "../../entity/User"
-import { ObjectID, ObjectId } from "bson"
+
 import { Guest } from "../../entity/Guest"
 
 export const NEW_MESSAGE_NOTIFICATION = "NEW_MESSAGE_NOTIFICATION"

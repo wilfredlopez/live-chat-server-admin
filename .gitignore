@@ -19,5 +19,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 live-chat-admin/node_modules/
-./src/config.ts
+src/myconfig.ts
 ormconfig.json

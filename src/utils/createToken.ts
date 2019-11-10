@@ -1,5 +1,5 @@
 import { User } from "../entity/User"
-import config from "../config"
+import config from "../myconfig"
 import jwt from "jsonwebtoken"
 import { Guest } from "../entity/Guest"
 

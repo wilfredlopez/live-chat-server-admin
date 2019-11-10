@@ -3,8 +3,6 @@ import {
   ObjectIdColumn,
   Column,
   BaseEntity,
-  OneToOne,
-  ManyToOne,
   ObjectID as typeOrmObjectId,
 } from "typeorm"
 import { Field, ID, ObjectType, InputType, Root, Ctx } from "type-graphql"

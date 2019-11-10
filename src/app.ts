@@ -24,8 +24,8 @@ import { createServer } from "http"
 import { execute, subscribe } from "graphql"
 import MessageResolver from "./resolvers/message/messageResolver"
 import GuestResolver from "./resolvers/Guest/guestResolver"
-import config from "./config"
-import { url } from "inspector"
+import config from "./myconfig"
+
 // const RedisStore = connectRedis(session);
 
 const allowedOrigins = [

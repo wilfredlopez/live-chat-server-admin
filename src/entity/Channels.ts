@@ -1,17 +1,5 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  ObjectID,
-  Column,
-  BaseEntity,
-  Unique,
-  ManyToOne,
-  ManyToMany,
-  OneToMany,
-} from "typeorm"
+import { Entity, ObjectIdColumn, ObjectID, Column, BaseEntity } from "typeorm"
 import { Field, ID, ObjectType } from "type-graphql"
-import { User } from "./User"
-import { isRequiredInputField } from "graphql"
 
 @ObjectType() //Make it an Object type for type-graphql
 @Entity() //Make it an Entity for mongodb and typeorm

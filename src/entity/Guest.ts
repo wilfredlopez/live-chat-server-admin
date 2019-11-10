@@ -1,16 +1,7 @@
 import { Entity, ObjectIdColumn, ObjectID, Column, BaseEntity } from "typeorm"
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  Root,
-  Query,
-  Ctx,
-} from "type-graphql"
+import { Field, ID, InputType, ObjectType, Root } from "type-graphql"
 import { Length, IsEmail, IsUrl } from "class-validator"
 import { Channel } from "./Channels"
-import { MyContext } from "../schema/MyContext"
 
 @InputType()
 export class GuestInputType {

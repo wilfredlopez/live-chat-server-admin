@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { verify } from "jsonwebtoken"
-import config from "../config"
+import config from "../myconfig"
 import { User } from "../entity/User"
 import { createToken, createGuestToken } from "../utils/createToken"
 import { SendCookies } from "../utils/sendCookies"

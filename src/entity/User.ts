@@ -1,15 +1,7 @@
 import { Entity, ObjectIdColumn, ObjectID, Column, BaseEntity } from "typeorm"
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  Root,
-  FieldResolver,
-} from "type-graphql"
+import { Field, ID, InputType, ObjectType, Root } from "type-graphql"
 import { Length, IsEmail, IsUrl } from "class-validator"
 import { isEmailAlreadyExist } from "../resolvers/user/isEmailAlreadyExist"
-import { Channel } from "./Channels"
 
 @InputType()
 export class UserInputType {

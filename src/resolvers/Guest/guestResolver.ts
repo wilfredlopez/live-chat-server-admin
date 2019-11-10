@@ -12,7 +12,7 @@ import { Guest, GuestInputType } from "../../entity/Guest"
 import { MyContext } from "../../schema/MyContext"
 import { createGuestToken } from "../../utils/createToken"
 import { SendCookies } from "../../utils/sendCookies"
-import ChannelResolver from "../channels/channelResolver"
+
 import { CHANNEL_MESSAGE_NOTIFICATION } from "../message/messageResolver"
 import { NotificationPayload } from "../../entity/Notification"
 
