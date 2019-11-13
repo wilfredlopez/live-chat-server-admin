@@ -1,16 +1,16 @@
-import React from "react"
+import React from "react";
 
 interface Props {
-  handleClick: () => void
-  open: boolean
+  handleClick: () => void;
+  open: boolean;
 }
 
 const ChatIcon: React.FC<Props> = ({ handleClick, open }) => {
   return (
-    <section>
+    <section onClick={handleClick}>
       <div className="chat_container_div">
         <div className="bubble_container">
-          <button className="chat_button" onClick={handleClick}>
+          <button className="chat_button">
             {open ? (
               <svg
                 focusable="false"
@@ -42,6 +42,6 @@ const ChatIcon: React.FC<Props> = ({ handleClick, open }) => {
         </div>
       </div>
     </section>
-  )
-}
-export default ChatIcon
+  );
+};
+export default ChatIcon;

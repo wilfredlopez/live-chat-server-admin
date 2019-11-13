@@ -103,6 +103,7 @@ main.chat .message p.message-header span.sent-date {
   right: 0;
   padding: 0 10px;
   margin: 0 5%;
+  left: 0;
 }
 
 span.messageFromMe {
@@ -216,7 +217,9 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
+  right: 0;
   background: #ffffff;
   border-radius: 1rem;
   border: 1px solid #e1e1e1;
+  max-width: 100%;
 }

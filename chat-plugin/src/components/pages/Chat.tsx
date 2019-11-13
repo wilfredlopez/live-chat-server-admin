@@ -1,8 +1,8 @@
-import { Typography, Button } from "@material-ui/core"
-import React, { useContext } from "react"
+import { Typography, Button } from "@material-ui/core";
+import React, { useContext } from "react";
 
-import ChatBox from "../Chat/ChatBox"
-import MessagesContext from "../context/messagesContext"
+import ChatBox from "../Chat/ChatBox";
+import MessagesContext from "../context/messagesContext";
 // const chat: Imessage[] = [
 //   {
 //     id: "asdsdsd",
@@ -20,21 +20,21 @@ import MessagesContext from "../context/messagesContext"
 // ]
 
 interface Props {
-  userId: string
-  channelId: string
-  susbcriptionLoading?: boolean
-  close: () => void
+  userId: string;
+  channelId: string;
+  susbcriptionLoading?: boolean;
+  close: () => void;
 }
 
 const Chat: React.FC<Props> = ({
   userId,
   channelId,
   close,
-  susbcriptionLoading = false,
+  susbcriptionLoading = false
 }) => {
   // const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation()
   // const [messages, setMessages] = useState<Imessage[]>([])
-  const { sendMessage, messages, isLoading } = useContext(MessagesContext)
+  const { sendMessage, messages, isLoading } = useContext(MessagesContext);
 
   // const {
   //   data,
@@ -85,20 +85,31 @@ const Chat: React.FC<Props> = ({
       <div
         style={{
           display: "flex",
-          justifyContent: "space-around",
-          padding: "0.5rem 0",
+          justifyContent: "space-between",
+          padding: "0.5rem 1rem"
         }}
       >
         <Typography component="h1" variant="h4" align="center">
           Chat
         </Typography>
         <div></div>
-        <Button onClick={close} title="Close" size="small" variant="outlined">
+        <Button
+          onClick={close}
+          title="Close"
+          size="small"
+          variant="outlined"
+          style={{ height: "30px" }}
+        >
           X
         </Button>
       </div>
       {susbcriptionLoading && (
-        <Typography component="h2" variant="body2" align="center">
+        <Typography
+          component="h2"
+          variant="body2"
+          align="center"
+          style={{ paddingBottom: "1em" }}
+        >
           Thanks for chatting. How can i help?
         </Typography>
       )}
@@ -112,7 +123,7 @@ const Chat: React.FC<Props> = ({
 
       {/* </Container> */}
     </div>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;

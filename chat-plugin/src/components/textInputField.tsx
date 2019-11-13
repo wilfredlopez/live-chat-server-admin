@@ -1,11 +1,11 @@
-import React from "react"
-import { FieldProps } from "formik"
-import { TextField } from "@material-ui/core"
+import React from "react";
+import { FieldProps } from "formik";
+import { TextField } from "@material-ui/core";
 
 interface ITextInputFieldProps extends FieldProps {
   // name: string
   // value: string
-  placeholder: string
+  placeholder: string;
 }
 
 const TextInputField: React.FunctionComponent<ITextInputFieldProps> = ({
@@ -14,7 +14,7 @@ const TextInputField: React.FunctionComponent<ITextInputFieldProps> = ({
   placeholder,
   ...props
 }) => {
-  const errorMessage = form.touched[field.name] && form.errors[field.name]
+  const errorMessage = form.touched[field.name] && form.errors[field.name];
 
   return (
     <React.Fragment>
@@ -31,12 +31,12 @@ const TextInputField: React.FunctionComponent<ITextInputFieldProps> = ({
 
         {errorMessage && (
           <div>
-            <p style={{ color: "red" }}>{errorMessage}</p>
+            <p style={{ color: "red", lineHeight: 0 }}>{errorMessage}</p>
           </div>
         )}
       </div>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default TextInputField
+export default TextInputField;

@@ -1,12 +1,12 @@
-import { Button, Container } from "@material-ui/core"
-import { Field, Form, Formik } from "formik"
-import React from "react"
+import { Button, Container } from "@material-ui/core";
+import { Field, Form, Formik } from "formik";
+import React from "react";
 
-import { RegisterGuestOrLoginMutationComponent } from "../generated/apolloComponents"
+import { RegisterGuestOrLoginMutationComponent } from "../generated/apolloComponents";
 
-import TextInputField from "./textInputField"
-import * as yup from "yup"
-import { guestMeQuery } from "../graphql/user/query/guestMeQuery"
+import TextInputField from "./textInputField";
+import * as yup from "yup";
+import { guestMeQuery } from "../graphql/user/query/guestMeQuery";
 
 const schema = yup.object({
   email: yup
@@ -15,22 +15,24 @@ const schema = yup.object({
     .required("Email is required.")
     .min(2, "First Name should have at least 2 characters."),
   firstname: yup.string().required("Firstname is required."),
-  lastname: yup.string().required("Lastname is required."),
-})
+  lastname: yup.string().required("Lastname is required.")
+});
 
-interface ILoginFormProps {}
+interface ILoginFormProps {
+  close: () => void;
+}
 
-const Login: React.FC<ILoginFormProps> = props => {
+const Login: React.FC<ILoginFormProps> = ({ close }) => {
   // const { data, loading } = useQuery<MeQueryResult, MeQueryVariables>(meQuery)
 
   const TextInputFieldGenerator = ({
     placeholder,
     name,
-    type = "text",
+    type = "text"
   }: {
-    placeholder: string
-    name: string
-    type?: string
+    placeholder: string;
+    name: string;
+    type?: string;
   }) => {
     return (
       <div className="form-control">
@@ -42,8 +44,8 @@ const Login: React.FC<ILoginFormProps> = props => {
           placeholder={placeholder}
         />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <React.Fragment>
@@ -53,10 +55,24 @@ const Login: React.FC<ILoginFormProps> = props => {
           background: "white",
           padding: "2rem",
           borderRadius: "1rem",
-          border: "1px solid #deded3",
+          border: "1px solid #deded3"
         }}
       >
-        <h1 style={{ textAlign: "center" }}>Login</h1>
+        <div
+          className="flex m-auto"
+          style={{ justifyContent: "space-between", padding: "0 6px" }}
+        >
+          <h1 style={{ textAlign: "center" }}>Login</h1>
+          <Button
+            onClick={() => close()}
+            variant="outlined"
+            size="small"
+            title="Close"
+            style={{ height: "40px" }}
+          >
+            Close
+          </Button>
+        </div>
         <RegisterGuestOrLoginMutationComponent>
           {(mutate, loginResponse) => {
             return (
@@ -64,7 +80,7 @@ const Login: React.FC<ILoginFormProps> = props => {
                 initialValues={{
                   email: "",
                   lastname: "",
-                  firstname: "",
+                  firstname: ""
                 }}
                 validationSchema={schema}
                 validateOnBlur={true}
@@ -75,12 +91,12 @@ const Login: React.FC<ILoginFormProps> = props => {
                       variables: {
                         firstname: data.firstname,
                         lastname: data.lastname,
-                        email: data.email,
+                        email: data.email
                       },
 
                       update: async (cache, { data, context }) => {
                         if (!data) {
-                          return
+                          return;
                         }
 
                         if (
@@ -100,16 +116,15 @@ const Login: React.FC<ILoginFormProps> = props => {
                                   firstName:
                                     data.registerGuestOrLogin.firstName,
                                   lastName: data.registerGuestOrLogin.firstName,
-                                  channelId:
-                                    data.registerGuestOrLogin.channelId,
+                                  channelId: data.registerGuestOrLogin.channelId
                                 },
-                                __typename: "Query",
-                              },
-                            })
+                                __typename: "Query"
+                              }
+                            });
                           }
                         }
-                      },
-                    })
+                      }
+                    });
 
                     if (
                       loginResponse &&
@@ -118,16 +133,16 @@ const Login: React.FC<ILoginFormProps> = props => {
                     ) {
                       setErrors({
                         email:
-                          "Server Error. Unable To Login. Plaese verify and try again.",
-                      })
-                      return
+                          "Server Error. Unable To Login. Plaese verify and try again."
+                      });
+                      return;
                     } else {
-                      console.log(loginResponse.data)
+                      console.log(loginResponse.data);
                     }
                   } catch (e) {
                     setErrors({
-                      email: "Unable To Login. Plaese verify and try again.",
-                    })
+                      email: "Unable To Login. Plaese verify and try again."
+                    });
                   }
                 }}
               >
@@ -136,16 +151,16 @@ const Login: React.FC<ILoginFormProps> = props => {
                     <Form>
                       {TextInputFieldGenerator({
                         name: "firstname",
-                        placeholder: "Firstname",
+                        placeholder: "Firstname"
                       })}
                       {TextInputFieldGenerator({
                         name: "lastname",
-                        placeholder: "Lastname",
+                        placeholder: "Lastname"
                       })}
                       {TextInputFieldGenerator({
                         name: "email",
                         placeholder: "Email",
-                        type: "email",
+                        type: "email"
                       })}
                       <br />
                       <Button
@@ -159,12 +174,12 @@ const Login: React.FC<ILoginFormProps> = props => {
                   </Container>
                 )}
               </Formik>
-            )
+            );
           }}
         </RegisterGuestOrLoginMutationComponent>
       </Container>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

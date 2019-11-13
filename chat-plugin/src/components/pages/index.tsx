@@ -1,29 +1,30 @@
-import * as React from "react"
-import Chat from "./Chat"
-import ChatIcon from "../Chat/ChatIcon"
+import * as React from "react";
+import Chat from "./Chat";
+import ChatIcon from "../Chat/ChatIcon";
 import {
   useGuestMeQueryQuery,
   useSendMessageMutaionMutation,
   useChannelMessageNotificationSubscriptionSubscription,
-  GuestMeQueryQueryResult,
-} from "../../generated/apolloComponents"
-import Login from "../login"
-import MessagesContext, { Imessage } from "../context/messagesContext"
+  GuestMeQueryQueryResult
+} from "../../generated/apolloComponents";
+import Login from "../login";
+import MessagesContext, { Imessage } from "../context/messagesContext";
+import { Card } from "@material-ui/core";
 
 interface IIndexProps {}
 
 const Index: React.FunctionComponent<IIndexProps> = props => {
-  const [messages, setMessages] = React.useState<Imessage[]>([])
-  const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation()
-  const me = useGuestMeQueryQuery()
+  const [messages, setMessages] = React.useState<Imessage[]>([]);
+  const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation();
+  const me = useGuestMeQueryQuery();
 
   const sendMessage = async (
     event: React.FormEvent<HTMLFormElement>,
     text: string,
     channelId: string,
-    userId: string,
+    userId: string
   ) => {
-    event.preventDefault()
+    event.preventDefault();
     // console.log(event.target)
 
     if (channelId) {
@@ -31,45 +32,47 @@ const Index: React.FunctionComponent<IIndexProps> = props => {
         variables: {
           text: text,
           channelId: channelId,
-          userId: userId,
+          userId: userId
         },
-        fetchPolicy: "no-cache",
-      })
+        fetchPolicy: "no-cache"
+      });
     }
-  }
+  };
 
   return (
-    <MessagesContext.Provider
-      value={{
-        sendMessage,
-        setMessages: setMessages,
-        messages: messages,
-        isLoading: sendingData.loading,
-      }}
-    >
-      <IndexContent me={me} />
-    </MessagesContext.Provider>
-  )
-}
+    <Card>
+      <MessagesContext.Provider
+        value={{
+          sendMessage,
+          setMessages: setMessages,
+          messages: messages,
+          isLoading: sendingData.loading
+        }}
+      >
+        <IndexContent me={me} />
+      </MessagesContext.Provider>
+    </Card>
+  );
+};
 
 interface IIndexContentProps {
-  me: GuestMeQueryQueryResult
+  me: GuestMeQueryQueryResult;
 }
 
 const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
-  const { setMessages, messages } = React.useContext(MessagesContext)
+  const { setMessages, messages } = React.useContext(MessagesContext);
   // const me = useGuestMeQueryQuery()
 
   const {
     data,
-    loading,
+    loading
   } = useChannelMessageNotificationSubscriptionSubscription({
     variables: {
-      channelId: me.data && me.data.guestMe ? me.data.guestMe.channelId : "",
-    },
-  })
+      channelId: me.data && me.data.guestMe ? me.data.guestMe.channelId : ""
+    }
+  });
 
   React.useEffect(() => {
     if (data && data.channelMessageNotification) {
@@ -77,22 +80,28 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
         date: data.channelMessageNotification.date,
         id: data.channelMessageNotification.id,
         message: data.channelMessageNotification.message,
-        user: data.channelMessageNotification.user,
-      }
+        user: data.channelMessageNotification.user
+      };
 
-      const updatedMessages = [...messages]
-      updatedMessages.push(newMessage)
-      setMessages(updatedMessages)
+      const updatedMessages = [...messages];
+      updatedMessages.push(newMessage);
+      setMessages(updatedMessages);
     }
     // eslint-disable-next-line
-  }, [data])
+  }, [data]);
 
   const chatIconComponent = (
     <ChatIcon handleClick={() => setOpen(value => !value)} open={open} />
-  )
+  );
 
   if (me && me.data && !me.data.guestMe) {
-    return open ? <Login /> : chatIconComponent
+    return open ? (
+      <>
+        <Login close={() => setOpen(c => !c)} /> {chatIconComponent}
+      </>
+    ) : (
+      chatIconComponent
+    );
   }
 
   if (open && me && me.data && me.data.guestMe) {
@@ -106,10 +115,10 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
         />{" "}
         {chatIconComponent}
       </>
-    )
+    );
   } else {
-    return chatIconComponent
+    return chatIconComponent;
   }
-}
+};
 
-export default Index
+export default Index;
