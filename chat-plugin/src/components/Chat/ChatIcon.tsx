@@ -1,4 +1,6 @@
 import React from "react";
+import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
+import { Button } from "@material-ui/core";
 
 interface Props {
   handleClick: () => void;
@@ -7,11 +9,17 @@ interface Props {
 
 const ChatIcon: React.FC<Props> = ({ handleClick, open }) => {
   return (
-    <section onClick={handleClick}>
+    <Button onClick={handleClick}>
       <div className="chat_container_div">
         <div className="bubble_container">
-          <button className="chat_button">
-            {open ? (
+          {/* <div className="chat_button"> */}
+          <ChatBubbleIcon
+            titleAccess="Chat"
+            fontSize="large"
+            color="primary"
+            scale={7}
+          />
+          {/* {open ? (
               <svg
                 focusable="false"
                 aria-hidden="true"
@@ -37,11 +45,11 @@ const ChatIcon: React.FC<Props> = ({ handleClick, open }) => {
                   </g>
                 </g>
               </svg>
-            )}
-          </button>
+            )} */}
         </div>
       </div>
-    </section>
+      {/* </div> */}
+    </Button>
   );
 };
 export default ChatIcon;

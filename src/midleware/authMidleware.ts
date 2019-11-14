@@ -1,58 +1,59 @@
-import { Request, Response, NextFunction } from "express"
-import { verify } from "jsonwebtoken"
-import { User } from "../entity/User"
-import { createToken, createGuestToken } from "../utils/createToken"
-import { SendCookies } from "../utils/sendCookies"
-import { Guest } from "../entity/Guest"
-import { JWT_SECRET } from "../utils/env"
+import { Request, Response, NextFunction } from "express";
+import { verify } from "jsonwebtoken";
+import { User } from "../entity/User";
+import { createToken, createGuestToken } from "../utils/createToken";
+import { SendCookies } from "../utils/sendCookies";
+import { Guest } from "../entity/Guest";
+import { JWT_SECRET } from "../utils/env";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 export const authMiddleware = async function(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   //logic here
   try {
-    const accessToken = req.cookies["access-token"]
-    const refreshToken = req.cookies["refresh-token"]
+    const accessToken = req.cookies[ACCESS_TOKEN];
+    const refreshToken = req.cookies[REFRESH_TOKEN];
     // console.log(accessToken)
 
     if (!refreshToken && !accessToken) {
-      return next()
+      return next();
     }
 
     try {
-      const data = await verify(accessToken, JWT_SECRET!)
+      const data = await verify(accessToken, JWT_SECRET!);
 
       // console.log(data)
 
       //@ts-ignore
-      req.userId = data.userId
+      req.userId = data.userId;
 
       //@ts-ignore
-      req.email = data.email
+      req.email = data.email;
 
-      next()
+      next();
     } catch (error) {
-      const data = (await verify(refreshToken, JWT_SECRET!)) as any
+      const data = (await verify(refreshToken, JWT_SECRET!)) as any;
 
-      let user: User | Guest = await User.findOneOrFail(data.userId)
+      let user: User | Guest = await User.findOneOrFail(data.userId);
       // let user: User = await User.findOneOrFail(data.userId)
 
       if (!user) {
-        user = await Guest.findOneOrFail(data.userId)
+        user = await Guest.findOneOrFail(data.userId);
       }
 
       if (!user || user.count !== data.count) {
-        return next() //user count is not valid or no user
+        return next(); //user count is not valid or no user
       }
 
-      let tokens
+      let tokens;
 
       if (user instanceof User) {
-        tokens = createToken(user)
+        tokens = createToken(user);
       } else {
-        tokens = createGuestToken(user)
+        tokens = createGuestToken(user);
       }
       // const hour = 3600000
 
@@ -69,17 +70,17 @@ export const authMiddleware = async function(
       //   httpOnly: true,
       // })
 
-      await user.save()
-      SendCookies(res, tokens.accessToken, tokens.refreshToken)
+      await user.save();
+      SendCookies(res, tokens.accessToken, tokens.refreshToken);
 
       //@ts-ignore
-      req.userId = data.userId
+      req.userId = data.userId;
       //@ts-ignore
-      req.email = data.email
+      req.email = data.email;
 
-      next()
+      next();
     }
   } catch (error) {
-    next()
+    next();
   }
-}
+};

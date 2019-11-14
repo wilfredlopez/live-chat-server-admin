@@ -1,13 +1,14 @@
-import { Response } from "express"
+import { Response } from "express";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
-const hour = 3600000
+const hour = 3600000;
 
 export function SendCookies(
   res: Response,
   accessToken: string,
-  refreshToken: string,
+  refreshToken: string
 ) {
-  res.cookie("refresh-token", refreshToken, {
+  res.cookie(REFRESH_TOKEN, refreshToken, {
     // expires: true,
     maxAge: 14 * 24 * hour, //2 weeks
     // httpOnly: true,
@@ -15,14 +16,14 @@ export function SendCookies(
     // sameSite: false,
     httpOnly: true,
     sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
-  })
+    secure: process.env.NODE_ENV === "production"
+  });
 
-  res.cookie("access-token", accessToken, {
+  res.cookie(ACCESS_TOKEN, accessToken, {
     // expires: true,
     maxAge: 24 * hour, //24 hours
     httpOnly: true,
     sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
-  })
+    secure: process.env.NODE_ENV === "production"
+  });
 }

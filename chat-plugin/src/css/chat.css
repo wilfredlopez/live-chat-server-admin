@@ -96,13 +96,15 @@ main.chat .message p.message-header span.sent-date {
   width: 100%;
   /* top: 83vh; */
 
-  margin: auto;
+  margin: 0 auto;
+  /* margin: 0 5%; */
   max-width: 320px;
   max-height: 201px;
-  bottom: 100px;
+  /* bottom: 100px; */
+  bottom: 7%;
   right: 0;
   padding: 0 10px;
-  margin: 0 5%;
+
   left: 0;
 }
 
@@ -179,11 +181,10 @@ body {
   display: block;
   margin: 8px;
 } */
+/* 
+#layout-root {
 
-.root-div {
-  /* top: 0px;
-  left: 0px; */
-  /* position: absolute; */
+
   position: fixed;
   bottom: 8px;
   right: 7px;
@@ -194,24 +195,27 @@ body {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  /* border-radius: 50%; */
+ 
   overflow: hidden;
-}
+} */
 
-.after-layout {
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
+/* .after-layout {
   position: absolute;
-  top: 0px;
-  bottom: 0px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
   width: 100%;
+  /* display: flex; */
+
+/* align-items: center;
+
+  justify-content: center;
+
   opacity: 1;
   transform: rotate(0deg) scale(1);
-  transition: transform 0.16s linear 0s, opacity 0.08s linear 0s;
-}
+  transition: transform 0.16s linear 0s, opacity 0.08s linear 0s; */
+/* }  */
 .chat-container-class {
   width: 100%;
   position: absolute;

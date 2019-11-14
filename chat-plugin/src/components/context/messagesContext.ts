@@ -1,33 +1,35 @@
-import { createContext } from "react"
-import { Maybe, User } from "../../generated/apolloComponents"
+import { createContext } from "react";
+import { Maybe, User } from "../../generated/apolloComponents";
 
 export interface IMesasgesContext {
   sendMessage: (
     event: React.FormEvent<HTMLFormElement>,
     text: string,
     channelId: string,
-    userId: string,
-  ) => void
-  setMessages: React.Dispatch<React.SetStateAction<Imessage[]>>
-  messages: Imessage[]
-  isLoading: boolean
+    userId: string
+  ) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Imessage[]>>;
+  messages: Imessage[];
+  isLoading: boolean;
+  logout: () => void;
 }
 
 export interface Imessage {
-  id: string
-  message: string
-  date: Date
+  id: string;
+  message: string;
+  date: Date;
 
-  user?: Maybe<Pick<User, "name" | "id" | "avatar" | "email">>
+  user?: Maybe<Pick<User, "name" | "id" | "avatar" | "email">>;
 }
 
 const initialContext: IMesasgesContext = {
   sendMessage: () => {},
   setMessages: () => {},
+  logout: () => {},
   messages: [],
-  isLoading: true,
-}
+  isLoading: true
+};
 
-const MessagesContext = createContext(initialContext)
+const MessagesContext = createContext(initialContext);
 
-export default MessagesContext
+export default MessagesContext;

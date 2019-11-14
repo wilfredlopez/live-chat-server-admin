@@ -2,7 +2,9 @@ import { Typography, Button } from "@material-ui/core";
 import React, { useContext } from "react";
 
 import ChatBox from "../Chat/ChatBox";
+import MinimizeIcon from "@material-ui/icons/Minimize";
 import MessagesContext from "../context/messagesContext";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 // const chat: Imessage[] = [
 //   {
 //     id: "asdsdsd",
@@ -23,18 +25,20 @@ interface Props {
   userId: string;
   channelId: string;
   susbcriptionLoading?: boolean;
-  close: () => void;
+  minimize: () => void;
 }
 
 const Chat: React.FC<Props> = ({
   userId,
   channelId,
-  close,
+  minimize,
   susbcriptionLoading = false
 }) => {
   // const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation()
   // const [messages, setMessages] = useState<Imessage[]>([])
-  const { sendMessage, messages, isLoading } = useContext(MessagesContext);
+  const { sendMessage, messages, isLoading, logout } = useContext(
+    MessagesContext
+  );
 
   // const {
   //   data,
@@ -80,47 +84,62 @@ const Chat: React.FC<Props> = ({
   // }
 
   return (
-    <div className="chat-container-class">
+    // <div className="chat-container-class">
+    <div className="wl-chatOrLoginScreen">
       {/* <Container maxWidth="sm"> */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "0.5rem 1rem"
-        }}
-      >
-        <Typography component="h1" variant="h4" align="center">
-          Chat
-        </Typography>
-        <div></div>
-        <Button
-          onClick={close}
-          title="Close"
-          size="small"
-          variant="outlined"
-          style={{ height: "30px" }}
+      <div style={{ background: "white" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0.5rem 1rem",
+            background: "white"
+          }}
         >
-          X
-        </Button>
+          <Typography component="h1" variant="h4" align="center">
+            Chat
+          </Typography>
+          <div>
+            <Button
+              onClick={minimize}
+              title="Minimize"
+              size="small"
+              color="primary"
+              variant="outlined"
+              // style={{ height: "30px" }}
+            >
+              <MinimizeIcon />
+            </Button>
+            <Button
+              onClick={() => logout()}
+              title="Close"
+              size="small"
+              // color="primary"
+              variant="outlined"
+              style={{ color: "red" }}
+            >
+              <ExitToAppIcon />
+            </Button>
+          </div>
+        </div>
+        {susbcriptionLoading && (
+          <Typography
+            component="h2"
+            variant="body2"
+            align="center"
+            style={{ paddingBottom: "1em" }}
+          >
+            Thanks for chatting. How can i help?
+          </Typography>
+        )}
+        <ChatBox
+          messages={messages}
+          handleMessage={(e, text) => sendMessage(e, text, channelId, userId)}
+          // disabled={sendingData.loading}
+          disabled={isLoading}
+          currentUserId={userId}
+        />
       </div>
-      {susbcriptionLoading && (
-        <Typography
-          component="h2"
-          variant="body2"
-          align="center"
-          style={{ paddingBottom: "1em" }}
-        >
-          Thanks for chatting. How can i help?
-        </Typography>
-      )}
-      <ChatBox
-        messages={messages}
-        handleMessage={(e, text) => sendMessage(e, text, channelId, userId)}
-        // disabled={sendingData.loading}
-        disabled={isLoading}
-        currentUserId={userId}
-      />
-
       {/* </Container> */}
     </div>
   );

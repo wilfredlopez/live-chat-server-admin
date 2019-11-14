@@ -1,13 +1,17 @@
-import { Request, Response } from "express"
-import { userLoader } from "../dataloaders/dataloaders"
+import { Request, Response } from "express";
+import { userLoader } from "../dataloaders/dataloaders";
 
 export interface Session {
-  userId?: string
+  userId?: string;
+}
+
+export interface MyRequest extends Request {
+  userId?: string;
 }
 
 export interface MyContext {
-  req: Request
-  res: Response
-  userLoader: ReturnType<typeof userLoader>
-  userId?: string
+  req: MyRequest;
+  res: Response;
+  userLoader: ReturnType<typeof userLoader>;
+  userId?: string;
 }

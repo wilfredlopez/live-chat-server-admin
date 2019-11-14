@@ -1,29 +1,26 @@
-import bcrypt from "bcryptjs"
-import { Arg, Ctx, Mutation, Query, Resolver, Authorized } from "type-graphql"
-import { User, UserInputType, UserLoginInput } from "../../entity/User"
-import { MyContext } from "../../schema/MyContext"
-import { createToken } from "../../utils/createToken"
-import { verify } from "jsonwebtoken"
-import { SendCookies } from "../../utils/sendCookies"
-import { ObjectID } from "bson"
-import { getMongoRepository } from "typeorm"
-import { JWT_SECRET } from "../../utils/env"
+import bcrypt from "bcryptjs";
+import { Arg, Ctx, Mutation, Query, Resolver, Authorized } from "type-graphql";
+import { User, UserInputType, UserLoginInput } from "../../entity/User";
+import { MyContext } from "../../schema/MyContext";
+import { createToken } from "../../utils/createToken";
+import { verify } from "jsonwebtoken";
+import { SendCookies } from "../../utils/sendCookies";
+import { ObjectID } from "bson";
+import { getMongoRepository } from "typeorm";
+import { JWT_SECRET } from "../../utils/env";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 
 @Resolver(User)
 export class UserResolver {
   //Cannot pass the entity or typescript type to the @mutation
   //need to create an object type. @ObjectType for this
   @Mutation(returns => User)
-  async register(@Arg("userData")
-  {
-    email,
-    password,
-    lastname,
-    firstname,
-    avatar,
-  }: UserInputType): Promise<User> {
+  async register(
+    @Arg("userData")
+    { email, password, lastname, firstname, avatar }: UserInputType
+  ): Promise<User> {
     try {
-      const hashedPassword = await bcrypt.hash(password, 10)
+      const hashedPassword = await bcrypt.hash(password, 10);
       //   await this.recipeService.removeById(id);
       const user = await User.create({
         email: email.toLowerCase(),
@@ -35,18 +32,18 @@ export class UserResolver {
         channels: ["general"],
         available: {
           online: false,
-          time: new Date(Date.now()),
+          time: new Date(Date.now())
         },
         chatsCount: 0,
         maxChatsAtATime: 3,
         avatar: avatar
           ? avatar
-          : "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg",
-      }).save()
+          : "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg"
+      }).save();
 
-      return user
+      return user;
     } catch (e) {
-      throw new Error(e)
+      throw new Error(e);
     }
   }
 
@@ -54,23 +51,23 @@ export class UserResolver {
   async login(
     @Arg("loginData")
     { email, password }: UserLoginInput,
-    @Ctx() ctx: MyContext,
+    @Ctx() ctx: MyContext
   ): Promise<User | null> {
-    const r = getMongoRepository(User)
+    const r = getMongoRepository(User);
 
     // await r.dropCollectionIndexes()
     // // r.dropCollectionIndexes()
     try {
       const user = await r.findOne({
         where: {
-          email: email.toLowerCase(),
-        },
-      })
+          email: email.toLowerCase()
+        }
+      });
       if (user) {
-        const validPassword = await bcrypt.compare(password, user.password)
+        const validPassword = await bcrypt.compare(password, user.password);
 
         if (!validPassword) {
-          throw new Error("Invalid Password") //if password is not valid
+          throw new Error("Invalid Password"); //if password is not valid
         }
 
         //TODO: I NEED TO FIX THIS WHEN I ADD EMAIL CONFIRMATION
@@ -78,19 +75,19 @@ export class UserResolver {
         //   throw new Error("Not Confirmed. Please confirm your email address") //if password is not valid
         // }
 
-        const { accessToken, refreshToken } = createToken(user)
+        const { accessToken, refreshToken } = createToken(user);
 
-        SendCookies(ctx.res, accessToken, refreshToken)
+        SendCookies(ctx.res, accessToken, refreshToken);
 
-        user.token = accessToken
-        await user.save()
+        user.token = accessToken;
+        await user.save();
 
-        return user //if password is valid
+        return user; //if password is valid
       }
-      return null
+      return null;
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
@@ -98,26 +95,26 @@ export class UserResolver {
   async setAvailable(@Ctx() ctx: MyContext): Promise<boolean> {
     //@ts-ignore
     if (!ctx.req.userId) {
-      return false
+      return false;
     } else {
       try {
         //@ts-ignore
-        const id = new ObjectID(ctx.req.userId)
-        const user = await ctx.userLoader.load(id as any)
+        const id = new ObjectID(ctx.req.userId);
+        const user = await ctx.userLoader.load(id as any);
 
         if (!user) {
-          return false
+          return false;
         }
 
         user.available = {
           online: true,
-          time: new Date(Date.now()),
-        }
-        await user.save()
-        return true
+          time: new Date(Date.now())
+        };
+        await user.save();
+        return true;
       } catch (error) {
-        console.log(error)
-        return false
+        console.log(error);
+        return false;
       }
     }
   }
@@ -125,25 +122,25 @@ export class UserResolver {
   @Mutation(() => Boolean!)
   async setUnavailable(@Ctx() ctx: MyContext): Promise<boolean> {
     //@ts-ignore
-    const { userId } = ctx.req
+    const { userId } = ctx.req;
     if (!userId) {
-      return false
+      return false;
     } else {
       try {
-        const id = new ObjectID(userId)
-        const user = await ctx.userLoader.load(id as any)
+        const id = new ObjectID(userId);
+        const user = await ctx.userLoader.load(id as any);
         if (!user) {
-          return false
+          return false;
         }
 
         user.available = {
           online: false,
-          time: new Date(Date.now()),
-        }
-        await user.save()
-        return true
+          time: new Date(Date.now())
+        };
+        await user.save();
+        return true;
       } catch (error) {
-        return false
+        return false;
       }
     }
   }
@@ -152,10 +149,10 @@ export class UserResolver {
     // const request = ctx.req as any
 
     //@ts-ignore
-    let { userId } = ctx.req
+    let { userId } = ctx.req;
 
     if (!userId) {
-      return undefined
+      return undefined;
     }
 
     // //@ts-ignore
@@ -165,8 +162,8 @@ export class UserResolver {
 
     //do it with user id
 
-    const id = new ObjectID(userId)
-    const user = await ctx.userLoader.load(id as any)
+    const id = new ObjectID(userId);
+    const user = await ctx.userLoader.load(id as any);
     // const user = await User.findOneOrFail(userId)
 
     //do it with email
@@ -176,9 +173,9 @@ export class UserResolver {
     //   },
     // })
     if (user) {
-      return user
+      return user;
     } else {
-      return undefined
+      return undefined;
     }
   }
 
@@ -186,58 +183,58 @@ export class UserResolver {
   async logout(@Ctx() ctx: MyContext): Promise<Boolean> {
     try {
       //@ts-ignore
-      let { userId } = ctx.req
-      const id = new ObjectID(userId)
-      const user = await ctx.userLoader.load(id as any)
+      let { userId } = ctx.req;
+      const id = new ObjectID(userId);
+      const user = await ctx.userLoader.load(id as any);
       user.available = {
         online: false,
-        time: new Date(Date.now()),
-      }
-      await user.save()
+        time: new Date(Date.now())
+      };
+      await user.save();
     } catch (error) {}
 
-    ctx.res.clearCookie("access-token")
-    ctx.res.clearCookie("refresh-token")
+    ctx.res.clearCookie(ACCESS_TOKEN);
+    ctx.res.clearCookie(REFRESH_TOKEN);
 
-    return true
+    return true;
   }
 
   @Mutation(() => Boolean)
   async confirmUser(@Arg("token") token: string): Promise<Boolean> {
-    const verified = verify(token, JWT_SECRET!) as any
+    const verified = verify(token, JWT_SECRET!) as any;
 
     if (!verified.userId) {
-      return false
+      return false;
     }
-    const user = await User.findOneOrFail({ id: verified.userId })
+    const user = await User.findOneOrFail({ id: verified.userId });
     if (!user) {
-      return false
+      return false;
     }
 
-    user.confirmed = true
-    await user.save()
+    user.confirmed = true;
+    await user.save();
 
-    return true
+    return true;
   }
 
   @Authorized() //only authorized members can access
   @Query(() => Boolean, { nullable: true })
   async AmIAuthorized(@Ctx() ctx: MyContext): Promise<boolean | null> {
     //@ts-ignore
-    const id = ctx.req.userId
+    const id = ctx.req.userId;
 
     if (!id) {
-      return null
+      return null;
     }
-    return true
+    return true;
   }
 
   //just for dev
   @Query(returns => [User])
-  async getAllUsers(@Ctx() {  }: MyContext) {
-    const users = await User.find()
-    return users
+  async getAllUsers(@Ctx() {}: MyContext) {
+    const users = await User.find();
+    return users;
   }
 }
 
-export default UserResolver
+export default UserResolver;

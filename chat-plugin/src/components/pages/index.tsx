@@ -5,11 +5,14 @@ import {
   useGuestMeQueryQuery,
   useSendMessageMutaionMutation,
   useChannelMessageNotificationSubscriptionSubscription,
-  GuestMeQueryQueryResult
+  GuestMeQueryQueryResult,
+  useLogoutMutationMutation,
+  GuestMeQueryQuery
 } from "../../generated/apolloComponents";
 import Login from "../login";
 import MessagesContext, { Imessage } from "../context/messagesContext";
 import { Card } from "@material-ui/core";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 
 interface IIndexProps {}
 
@@ -17,6 +20,24 @@ const Index: React.FunctionComponent<IIndexProps> = props => {
   const [messages, setMessages] = React.useState<Imessage[]>([]);
   const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation();
   const me = useGuestMeQueryQuery();
+  const [requestLogout] = useLogoutMutationMutation();
+
+  const logout = async () => {
+    await requestLogout({
+      update: client => {
+        client.writeData<GuestMeQueryQuery>({
+          data: {
+            __typename: "Query",
+            guestMe: null
+          }
+        });
+      }
+    });
+
+    localStorage.removeItem(ACCESS_TOKEN);
+
+    localStorage.removeItem(REFRESH_TOKEN);
+  };
 
   const sendMessage = async (
     event: React.FormEvent<HTMLFormElement>,
@@ -46,7 +67,8 @@ const Index: React.FunctionComponent<IIndexProps> = props => {
           sendMessage,
           setMessages: setMessages,
           messages: messages,
-          isLoading: sendingData.loading
+          isLoading: sendingData.loading,
+          logout: logout
         }}
       >
         <IndexContent me={me} />
@@ -95,13 +117,14 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
   );
 
   if (me && me.data && !me.data.guestMe) {
-    return open ? (
-      <>
-        <Login close={() => setOpen(c => !c)} /> {chatIconComponent}
-      </>
-    ) : (
-      chatIconComponent
-    );
+    return open ? <Login close={() => setOpen(c => !c)} /> : chatIconComponent;
+    // return open ? (
+    //   <>
+    //     <Login close={() => setOpen(c => !c)} /> {chatIconComponent}
+    //   </>
+    // ) : (
+    //   chatIconComponent
+    // );
   }
 
   if (open && me && me.data && me.data.guestMe) {
@@ -111,9 +134,9 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
           userId={me.data.guestMe.id}
           channelId={me.data.guestMe.channelId}
           susbcriptionLoading={loading}
-          close={() => setOpen(c => !c)}
+          minimize={() => setOpen(c => !c)}
         />{" "}
-        {chatIconComponent}
+        {/* {chatIconComponent} */}
       </>
     );
   } else {

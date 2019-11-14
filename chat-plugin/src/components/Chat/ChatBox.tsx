@@ -1,41 +1,44 @@
-import React, { useState, useRef, useLayoutEffect } from "react"
+import React, { useState, useRef, useLayoutEffect } from "react";
 
-import { Avatar, Card, Input } from "@material-ui/core"
+import { Avatar, Card, Input, Button } from "@material-ui/core";
 
-import { Imessage } from "../context/messagesContext"
+import { Imessage } from "../context/messagesContext";
 
 interface Props {
-  messages: Imessage[]
-  disabled: boolean
-  handleMessage: (event: React.FormEvent<HTMLFormElement>, text: string) => void
-  currentUserId: string
+  messages: Imessage[];
+  disabled: boolean;
+  handleMessage: (
+    event: React.FormEvent<HTMLFormElement>,
+    text: string
+  ) => void;
+  currentUserId: string;
 }
 
 const ChatBox: React.FC<Props> = ({
   messages,
   disabled,
   handleMessage,
-  currentUserId,
+  currentUserId
 }) => {
-  const [text, setText] = useState<string>("")
-  let chatEl = useRef<HTMLDivElement | null>(null)
+  const [text, setText] = useState<string>("");
+  let chatEl = useRef<HTMLDivElement | null>(null);
 
   function scrollToBottom() {
     if (chatEl.current) {
-      const scrollHeight = chatEl.current.scrollHeight
-      const height = chatEl.current.clientHeight
-      const maxScrollTop = scrollHeight - height
-      chatEl.current.scrollTop = maxScrollTop > 0 ? maxScrollTop + 500 : 0
+      const scrollHeight = chatEl.current.scrollHeight;
+      const height = chatEl.current.clientHeight;
+      const maxScrollTop = scrollHeight - height;
+      chatEl.current.scrollTop = maxScrollTop > 0 ? maxScrollTop + 500 : 0;
     }
   }
 
   useLayoutEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <>
-      <Card>
+      <Card style={{ position: "relative" }}>
         <div style={{ position: "relative" }}>
           <div
             className="flex flex-column col sm-p-0"
@@ -43,6 +46,7 @@ const ChatBox: React.FC<Props> = ({
               maxHeight: "30vh",
               minHeight: "25vh",
               padding: "6px",
+              width: "100%"
             }}
           >
             <main className="chat flex flex-column flex-1 clear" ref={chatEl}>
@@ -72,7 +76,7 @@ const ChatBox: React.FC<Props> = ({
                           second: "numeric",
                           hour12: true,
 
-                          timeZone: "America/New_York",
+                          timeZone: "America/New_York"
                           // timeZone: "America/Los_Angeles",
                         }).format(new Date(message.date))}
                         {/* {moment(message.createdAt).format("MMM Do, hh:mm:ss")} */}
@@ -97,17 +101,19 @@ const ChatBox: React.FC<Props> = ({
         <div className="formButtonContainer">
           <form
             onSubmit={e => {
-              handleMessage(e, text)
-              setText("")
+              e.preventDefault();
+              handleMessage(e, text);
+              setText("");
             }}
-            className="flex flex-row flex-space-between sm-px-0"
+            // className="flex flex-row flex-space-between sm-px-0"
             id="send-message"
           >
             {" "}
             <Input
               type="text"
               name="text"
-              className="flex flex-3"
+              // className="flex flex-3"
+              style={{ padding: "1rem" }}
               autoCorrect="false"
               fullWidth
               placeholder="Type Here..."
@@ -119,18 +125,19 @@ const ChatBox: React.FC<Props> = ({
               autoFocus
               onChange={e => setText(e.target.value)}
             />
-            <button
+            <Button
               className="button-primary flex-1"
               type="submit"
               disabled={disabled}
+              fullWidth
             >
               Send
-            </button>
+            </Button>
           </form>
         </div>
       </Card>
     </>
-  )
-}
+  );
+};
 
-export default ChatBox
+export default ChatBox;
