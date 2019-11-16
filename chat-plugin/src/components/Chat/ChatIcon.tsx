@@ -16,7 +16,10 @@ const ChatIcon: React.FC<Props> = ({ handleClick, open }) => {
           <ChatBubbleIcon
             titleAccess="Chat"
             fontSize="large"
-            color="primary"
+            // color="primary"
+            style={{
+              color: "red"
+            }}
             scale={7}
           />
           {/* {open ? (

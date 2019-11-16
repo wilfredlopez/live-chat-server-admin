@@ -83,7 +83,10 @@ export type MessageInputType = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  createChannel: Channel,
   fileUpload: Scalars['Boolean'],
+  sendMessage: Message,
+  registerGuestOrLogin: Guest,
   changePassword?: Maybe<User>,
   forgotPassword: Scalars['Boolean'],
   invalidateTokens: Scalars['Boolean'],
@@ -93,14 +96,26 @@ export type Mutation = {
   setUnavailable: Scalars['Boolean'],
   logout: Scalars['Boolean'],
   confirmUser: Scalars['Boolean'],
-  createChannel: Channel,
-  sendMessage: Message,
-  registerGuestOrLogin: Guest,
+};
+
+
+export type MutationCreateChannelArgs = {
+  name: Scalars['String']
 };
 
 
 export type MutationFileUploadArgs = {
   file: Scalars['Upload']
+};
+
+
+export type MutationSendMessageArgs = {
+  messageInput: MessageInputType
+};
+
+
+export type MutationRegisterGuestOrLoginArgs = {
+  guestInputType: GuestInputType
 };
 
 
@@ -128,41 +143,27 @@ export type MutationConfirmUserArgs = {
   token: Scalars['String']
 };
 
-
-export type MutationCreateChannelArgs = {
-  name: Scalars['String']
-};
-
-
-export type MutationSendMessageArgs = {
-  messageInput: MessageInputType
-};
-
-
-export type MutationRegisterGuestOrLoginArgs = {
-  guestInputType: GuestInputType
-};
-
 export type Notification = {
    __typename?: 'Notification',
   /** This is the Channel ID */
   id: Scalars['ID'],
   message: Scalars['String'],
+  channelId: Scalars['String'],
   date: Scalars['DateTime'],
   user?: Maybe<User>,
 };
 
 export type Query = {
    __typename?: 'Query',
+  getAllChannels: Array<Channel>,
   files: Array<Scalars['String']>,
+  getAllMessages: Array<Message>,
+  getAllGuests: Array<Guest>,
+  guestMe?: Maybe<Guest>,
   test: Scalars['String'],
   me?: Maybe<User>,
   AmIAuthorized?: Maybe<Scalars['Boolean']>,
   getAllUsers: Array<User>,
-  getAllChannels: Array<Channel>,
-  getAllMessages: Array<Message>,
-  getAllGuests: Array<Guest>,
-  guestMe?: Maybe<Guest>,
 };
 
 export type Subscription = {
@@ -245,7 +246,7 @@ export type NewMessageSubscriptionSubscription = (
   { __typename?: 'Subscription' }
   & { newMessageNotification: (
     { __typename?: 'Notification' }
-    & Pick<Notification, 'id' | 'message' | 'date'>
+    & Pick<Notification, 'id' | 'message' | 'date' | 'channelId'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'avatar' | 'email'>
@@ -306,7 +307,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'email' | 'lastName' | 'firstName' | 'confirmed' | 'id' | 'name'>
+    & Pick<User, 'email' | 'id' | 'name'>
   )> }
 );
 
@@ -358,6 +359,7 @@ export const NewMessageSubscriptionDocument = gql`
     id
     message
     date
+    channelId
     user {
       id
       name
@@ -525,9 +527,6 @@ export const MeDocument = gql`
     query Me {
   me {
     email
-    lastName
-    firstName
-    confirmed
     id
     name
   }

@@ -11,7 +11,7 @@ import {
 } from "../../generated/apolloComponents";
 import Login from "../login";
 import MessagesContext, { Imessage } from "../context/messagesContext";
-import { Card } from "@material-ui/core";
+// import { Card } from "@material-ui/core";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 
 interface IIndexProps {}
@@ -61,7 +61,8 @@ const Index: React.FunctionComponent<IIndexProps> = props => {
   };
 
   return (
-    <Card>
+    // <Card>
+    <div>
       <MessagesContext.Provider
         value={{
           sendMessage,
@@ -73,7 +74,8 @@ const Index: React.FunctionComponent<IIndexProps> = props => {
       >
         <IndexContent me={me} />
       </MessagesContext.Provider>
-    </Card>
+    </div>
+    // </Card>
   );
 };
 
@@ -117,7 +119,11 @@ const IndexContent: React.FunctionComponent<IIndexContentProps> = ({ me }) => {
   );
 
   if (me && me.data && !me.data.guestMe) {
-    return open ? <Login close={() => setOpen(c => !c)} /> : chatIconComponent;
+    return open ? (
+      <Login minimize={() => setOpen(c => !c)} />
+    ) : (
+      chatIconComponent
+    );
     // return open ? (
     //   <>
     //     <Login close={() => setOpen(c => !c)} /> {chatIconComponent}

@@ -1,31 +1,35 @@
-import React, { useState, useRef, useLayoutEffect } from "react"
+import React, { useState, useRef, useLayoutEffect, useContext } from "react";
 
-import { Avatar } from "@material-ui/core"
-import "./chat.css"
-import "./base.css"
-import { Imessage } from "../../pages/Chat"
+import { Avatar } from "@material-ui/core";
+import "./chat.css";
+import "./base.css";
+// import { Imessage } from "../../pages/Chat";
+import MessagesContext from "../../context/messagesContext";
 interface Props {
-  messages: Imessage[]
-  disabled: boolean
-  sendMessage: (event: React.FormEvent<HTMLFormElement>, text: string) => void
+  // messages: Imessage[]
+  // disabled: boolean
+  // sendMessage: (event: React.FormEvent<HTMLFormElement>, text: string) => void
+  channelId: string;
+  userId: string;
 }
 
-const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
-  const [text, setText] = useState<string>("")
-  let chatEl = useRef<HTMLDivElement | null>(null)
+const ChatBox: React.FC<Props> = ({ channelId, userId }) => {
+  const { isLoading, messages, sendMessage } = useContext(MessagesContext);
+  const [text, setText] = useState<string>("");
+  let chatEl = useRef<HTMLDivElement | null>(null);
 
   function scrollToBottom() {
     if (chatEl.current) {
-      const scrollHeight = chatEl.current.scrollHeight
-      const height = chatEl.current.clientHeight
-      const maxScrollTop = scrollHeight - height
-      chatEl.current.scrollTop = maxScrollTop > 0 ? maxScrollTop + 500 : 0
+      const scrollHeight = chatEl.current.scrollHeight;
+      const height = chatEl.current.clientHeight;
+      const maxScrollTop = scrollHeight - height;
+      chatEl.current.scrollTop = maxScrollTop > 0 ? maxScrollTop + 500 : 0;
     }
   }
 
   useLayoutEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <>
@@ -33,7 +37,7 @@ const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
         <div
           className="flex flex-column col sm-p-0"
           style={{
-            maxHeight: "50vh",
+            maxHeight: "50vh"
           }}
         >
           <main className="chat flex flex-column flex-1 clear" ref={chatEl}>
@@ -66,8 +70,8 @@ const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
       <div className="formButtonContainer">
         <form
           onSubmit={e => {
-            sendMessage(e, text)
-            setText("")
+            sendMessage(e, text, channelId, userId);
+            setText("");
           }}
           className="flex flex-row flex-space-between sm-px-0"
           id="send-message"
@@ -83,14 +87,15 @@ const ChatBox: React.FC<Props> = ({ messages, sendMessage, disabled }) => {
           <button
             className="button-primary flex-1 p-1"
             type="submit"
-            disabled={disabled}
+            disabled={isLoading}
+            // disabled={disabled}
           >
             Send
           </button>
         </form>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ChatBox
+export default ChatBox;

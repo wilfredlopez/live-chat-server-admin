@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react"
-import ChatBox from "../components/Chat/ChatBox"
+import React, { useState, useEffect, useContext } from "react";
+// import ChatBox from "../components/Chat/ChatBox"
 import {
   useNewMessageSubscriptionSubscription,
   User,
   Maybe,
   useSendMessageMutaionMutation,
-  useMeQuery,
-} from "../generated/apolloComponents"
-import { Typography } from "@material-ui/core"
+  useMeQuery
+} from "../generated/apolloComponents";
+// import { Typography } from "@material-ui/core"
+import ChatContent from "../components/Chat/ChatContent";
+import MessagesContext from "../context/messagesContext";
 // const chat: Imessage[] = [
 //   {
 //     id: "asdsdsd",
@@ -25,22 +27,23 @@ import { Typography } from "@material-ui/core"
 // ]
 
 export interface Imessage {
-  id: string
-  message: string
-  date: Date
+  id: string;
+  message: string;
+  date: Date;
 
-  user?: Maybe<Pick<User, "name" | "id" | "avatar" | "email">>
+  user?: Maybe<Pick<User, "name" | "id" | "avatar" | "email">>;
 }
 
 interface Props {}
 
 const Chat: React.FC<Props> = () => {
-  const [sendMessageMutation] = useSendMessageMutaionMutation()
-  const [messages, setMessages] = useState<Imessage[]>([])
-  const [channelId, setChannelId] = useState<string | null>(null)
-  const me = useMeQuery()
+  // const [sendMessageMutation] = useSendMessageMutaionMutation();
+  // const [messages, setMessages] = useState<Imessage[]>([]);
+  const { setMessages, messages } = useContext(MessagesContext);
+  const [channelId, setChannelId] = useState<string | null>(null);
+  const me = useMeQuery();
 
-  const { data, loading } = useNewMessageSubscriptionSubscription()
+  const { data, loading } = useNewMessageSubscriptionSubscription();
 
   useEffect(() => {
     if (data && data.newMessageNotification) {
@@ -48,58 +51,102 @@ const Chat: React.FC<Props> = () => {
         date: data.newMessageNotification.date,
         id: data.newMessageNotification.id,
         message: data.newMessageNotification.message,
-        user: data.newMessageNotification.user,
-      }
+        user: data.newMessageNotification.user
+      };
 
-      const updatedMessages = [...messages]
-      setChannelId(data.newMessageNotification.id)
-      updatedMessages.push(newMessage)
-      setMessages(updatedMessages)
+      const updatedMessages = [...messages];
+      setChannelId(data.newMessageNotification.channelId);
+      updatedMessages.push(newMessage);
+      setMessages(updatedMessages);
     }
     // eslint-disable-next-line
-  }, [data])
+  }, [data]);
+
+  // const sendMessage = async (
+  //   event: React.FormEvent<HTMLFormElement>,
+  //   text: string
+  // ) => {
+  //   event.preventDefault();
+  //   // console.log(event.target)
+
+  //   if (me.data && me.data.me && channelId) {
+  //     await sendMessageMutation({
+  //       variables: {
+  //         text: text,
+  //         channelId: channelId,
+  //         userId: me.data.me.id
+  //       }
+  //     });
+  //   }
+  // };
+
+  if (me.data && me.data.me) {
+    return <ChatContent loading={loading} me={me} channelId={channelId} />;
+  }
+
+  return (
+    <div>Loading...</div>
+    // <div>
+    //   <h1>Chat</h1>
+
+    //   {loading && (
+    //     <div
+    //       style={{
+    //         textAlign: "center",
+    //       }}
+    //     >
+    //       <Typography component="h2" variant="body1">
+    //         Waiting for Chats...
+    //       </Typography>
+    //     </div>
+    //   )}
+
+    //   <ChatBox
+    //     messages={messages}
+    //     sendMessage={sendMessage}
+    //     disabled={loading}
+    //   />
+    // </div>
+  );
+};
+
+const ChatContainer = () => {
+  const [messages, setMessages] = useState<Imessage[]>([]);
+  const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation();
 
   const sendMessage = async (
     event: React.FormEvent<HTMLFormElement>,
     text: string,
+    channelId: string,
+    userId: string
   ) => {
-    event.preventDefault()
+    event.preventDefault();
     // console.log(event.target)
 
-    if (me.data && me.data.me && channelId) {
+    if (channelId) {
       await sendMessageMutation({
         variables: {
           text: text,
           channelId: channelId,
-          userId: me.data.me.id,
+          userId: userId
         },
-      })
+        fetchPolicy: "no-cache"
+      });
     }
-  }
+  };
 
   return (
-    <div>
-      <h1>Chat</h1>
+    <MessagesContext.Provider
+      value={{
+        sendMessage,
+        setMessages: setMessages,
+        messages: messages,
+        isLoading: sendingData.loading
+      }}
+    >
+      <Chat />
+    </MessagesContext.Provider>
+  );
+};
 
-      {loading && (
-        <div
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <Typography component="h2" variant="body1">
-            Waiting for Chats...
-          </Typography>
-        </div>
-      )}
-
-      <ChatBox
-        messages={messages}
-        sendMessage={sendMessage}
-        disabled={loading}
-      />
-    </div>
-  )
-}
-
-export default Chat
+export default ChatContainer;

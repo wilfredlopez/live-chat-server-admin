@@ -1,4 +1,4 @@
-import { gql } from "apollo-boost"
+import { gql } from "apollo-boost";
 
 export const newMessageSubscription = gql`
   subscription NewMessageSubscription {
@@ -6,6 +6,7 @@ export const newMessageSubscription = gql`
       id
       message
       date
+      channelId
       user {
         id
         name
@@ -14,4 +15,4 @@ export const newMessageSubscription = gql`
       }
     }
   }
-`
+`;

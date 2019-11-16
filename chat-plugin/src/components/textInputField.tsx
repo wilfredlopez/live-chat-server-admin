@@ -31,7 +31,7 @@ const TextInputField: React.FunctionComponent<ITextInputFieldProps> = ({
 
         {errorMessage && (
           <div>
-            <p style={{ color: "red", lineHeight: 0 }}>{errorMessage}</p>
+            <p style={{ color: "red", lineHeight: 0.5 }}>{errorMessage}</p>
           </div>
         )}
       </div>

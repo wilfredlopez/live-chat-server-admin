@@ -1,12 +1,13 @@
 import { Button } from "@material-ui/core";
 import { Field, Form, Formik } from "formik";
 import React from "react";
-import MinimizeIcon from "@material-ui/icons/Minimize";
+// import MinimizeIcon from "@material-ui/icons/Minimize";
 import { RegisterGuestOrLoginMutationComponent } from "../generated/apolloComponents";
 
 import TextInputField from "./textInputField";
 import * as yup from "yup";
 import { guestMeQuery } from "../graphql/user/query/guestMeQuery";
+import CardHeader from "./reusable/CardHeader";
 
 const schema = yup.object({
   email: yup
@@ -19,10 +20,10 @@ const schema = yup.object({
 });
 
 interface ILoginFormProps {
-  close: () => void;
+  minimize: () => void;
 }
 
-const Login: React.FC<ILoginFormProps> = ({ close }) => {
+const Login: React.FC<ILoginFormProps> = ({ minimize }) => {
   // const { data, loading } = useQuery<MeQueryResult, MeQueryVariables>(meQuery)
 
   const TextInputFieldGenerator = ({
@@ -52,141 +53,121 @@ const Login: React.FC<ILoginFormProps> = ({ close }) => {
       <div className="wl-chatOrLoginScreen">
         <div
           style={{
-            background: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            border: "1px solid #deded3"
+            background: "white"
+            // padding: "1rem",
+            // borderRadius: "1rem",
+            // border: "1px solid #deded3"
           }}
         >
-          <div
-            className="flex m-auto"
-            style={{
-              padding: "0 6px",
-              justifyContent: "space-around",
-              display: "flex",
-              alignItems: "center",
-              border: "1px solid #f4f4f4"
-            }}
-          >
-            <h1 style={{ textAlign: "center", padding: "0", margin: "0" }}>
-              Login
-            </h1>
-            <Button
-              onClick={() => close()}
-              variant="outlined"
-              size="small"
-              title="Close"
-              // style={{ height: "40px" }}
-            >
-              <MinimizeIcon />
-            </Button>
-          </div>
-          <RegisterGuestOrLoginMutationComponent>
-            {(mutate, loginResponse) => {
-              return (
-                <Formik
-                  initialValues={{
-                    email: "",
-                    lastname: "",
-                    firstname: ""
-                  }}
-                  validationSchema={schema}
-                  validateOnBlur={true}
-                  validateOnChange={false}
-                  onSubmit={async (data, { setErrors }) => {
-                    try {
-                      await mutate({
-                        variables: {
-                          firstname: data.firstname,
-                          lastname: data.lastname,
-                          email: data.email
-                        },
+          <CardHeader minimize={minimize} title="Chat With Us!" />
+          <div style={{ padding: "1rem" }}>
+            <RegisterGuestOrLoginMutationComponent>
+              {(mutate, loginResponse) => {
+                return (
+                  <Formik
+                    initialValues={{
+                      email: "",
+                      lastname: "",
+                      firstname: ""
+                    }}
+                    validationSchema={schema}
+                    validateOnBlur={true}
+                    validateOnChange={false}
+                    onSubmit={async (data, { setErrors }) => {
+                      try {
+                        await mutate({
+                          variables: {
+                            firstname: data.firstname,
+                            lastname: data.lastname,
+                            email: data.email
+                          },
 
-                        update: async (cache, { data, context }) => {
-                          if (!data) {
-                            return;
-                          }
+                          update: async (cache, { data, context }) => {
+                            if (!data) {
+                              return;
+                            }
 
-                          if (
-                            data.registerGuestOrLogin &&
-                            data.registerGuestOrLogin.__typename
-                          ) {
-                            if (cache.writeQuery) {
-                              cache.writeQuery({
-                                query: guestMeQuery,
-                                data: {
-                                  guestMe: {
-                                    __typename: "Guest",
-                                    avatar: data.registerGuestOrLogin.avatar,
-                                    email: data.registerGuestOrLogin.email,
-                                    id: data.registerGuestOrLogin.id,
-                                    name: data.registerGuestOrLogin.name,
-                                    firstName:
-                                      data.registerGuestOrLogin.firstName,
-                                    lastName:
-                                      data.registerGuestOrLogin.firstName,
-                                    channelId:
-                                      data.registerGuestOrLogin.channelId
-                                  },
-                                  __typename: "Query"
-                                }
-                              });
+                            if (
+                              data.registerGuestOrLogin &&
+                              data.registerGuestOrLogin.__typename
+                            ) {
+                              if (cache.writeQuery) {
+                                cache.writeQuery({
+                                  query: guestMeQuery,
+                                  data: {
+                                    guestMe: {
+                                      __typename: "Guest",
+                                      avatar: data.registerGuestOrLogin.avatar,
+                                      email: data.registerGuestOrLogin.email,
+                                      id: data.registerGuestOrLogin.id,
+                                      name: data.registerGuestOrLogin.name,
+                                      firstName:
+                                        data.registerGuestOrLogin.firstName,
+                                      lastName:
+                                        data.registerGuestOrLogin.firstName,
+                                      channelId:
+                                        data.registerGuestOrLogin.channelId
+                                    },
+                                    __typename: "Query"
+                                  }
+                                });
+                              }
                             }
                           }
-                        }
-                      });
-
-                      if (
-                        loginResponse &&
-                        loginResponse.data &&
-                        !loginResponse.data.registerGuestOrLogin
-                      ) {
-                        setErrors({
-                          email:
-                            "Server Error. Unable To Login. Plaese verify and try again."
                         });
-                        return;
-                      } else {
-                        console.log(loginResponse.data);
+
+                        if (
+                          loginResponse &&
+                          loginResponse.data &&
+                          !loginResponse.data.registerGuestOrLogin
+                        ) {
+                          setErrors({
+                            email:
+                              "Server Error. Unable To Login. Plaese verify and try again."
+                          });
+                          return;
+                        } else {
+                          console.log(loginResponse.data);
+                        }
+                      } catch (e) {
+                        setErrors({
+                          email: "Unable To Login. Plaese verify and try again."
+                        });
                       }
-                    } catch (e) {
-                      setErrors({
-                        email: "Unable To Login. Plaese verify and try again."
-                      });
-                    }
-                  }}
-                >
-                  {() => (
-                    <div className="wl-container">
-                      <Form>
-                        {TextInputFieldGenerator({
-                          name: "firstname",
-                          placeholder: "Firstname"
-                        })}
-                        {TextInputFieldGenerator({
-                          name: "lastname",
-                          placeholder: "Lastname"
-                        })}
-                        {TextInputFieldGenerator({
-                          name: "email",
-                          placeholder: "Email",
-                          type: "email"
-                        })}
-                        <br />
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          disabled={loginResponse.loading}
-                        >
-                          Start Chat
-                        </Button>
-                      </Form>
-                    </div>
-                  )}
-                </Formik>
-              );
-            }}
-          </RegisterGuestOrLoginMutationComponent>
+                    }}
+                  >
+                    {() => (
+                      <div className="wl-container">
+                        <Form>
+                          {TextInputFieldGenerator({
+                            name: "firstname",
+                            placeholder: "Firstname"
+                          })}
+                          {TextInputFieldGenerator({
+                            name: "lastname",
+                            placeholder: "Lastname"
+                          })}
+                          {TextInputFieldGenerator({
+                            name: "email",
+                            placeholder: "Email",
+                            type: "email"
+                          })}
+                          <br />
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={loginResponse.loading}
+                          >
+                            Start Chat
+                          </Button>
+                        </Form>
+                      </div>
+                    )}
+                  </Formik>
+                );
+              }}
+            </RegisterGuestOrLoginMutationComponent>
+          </div>
         </div>
       </div>
     </React.Fragment>

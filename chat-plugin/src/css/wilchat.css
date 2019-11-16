@@ -30,13 +30,15 @@
 .wl-chatOrLoginScreen {
   position: fixed;
   bottom: 8px;
-  right: 0;
+  right: 8px;
   width: 340px;
   max-width: 100%;
   border-radius: 1rem;
   border-style: solid;
   overflow: hidden;
-  border-color: #e3e3e3;
+  border-color: #e8e8e8;
+  border-width: 1px;
+  z-index: 9000;
 }
 
 span.messageFromMe {

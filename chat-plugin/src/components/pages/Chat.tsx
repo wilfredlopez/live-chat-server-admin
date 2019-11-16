@@ -1,10 +1,11 @@
-import { Typography, Button } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import React, { useContext } from "react";
 
 import ChatBox from "../Chat/ChatBox";
-import MinimizeIcon from "@material-ui/icons/Minimize";
+// import MinimizeIcon from "@material-ui/icons/Minimize";
 import MessagesContext from "../context/messagesContext";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import CardHeader from "../reusable/CardHeader";
+// import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 // const chat: Imessage[] = [
 //   {
 //     id: "asdsdsd",
@@ -36,9 +37,7 @@ const Chat: React.FC<Props> = ({
 }) => {
   // const [sendMessageMutation, sendingData] = useSendMessageMutaionMutation()
   // const [messages, setMessages] = useState<Imessage[]>([])
-  const { sendMessage, messages, isLoading, logout } = useContext(
-    MessagesContext
-  );
+  const { sendMessage, messages, isLoading } = useContext(MessagesContext);
 
   // const {
   //   data,
@@ -88,15 +87,7 @@ const Chat: React.FC<Props> = ({
     <div className="wl-chatOrLoginScreen">
       {/* <Container maxWidth="sm"> */}
       <div style={{ background: "white" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "0.5rem 1rem",
-            background: "white"
-          }}
-        >
-          <Typography component="h1" variant="h4" align="center">
+        {/* <Typography component="h1" variant="h4" align="center">
             Chat
           </Typography>
           <div>
@@ -120,8 +111,9 @@ const Chat: React.FC<Props> = ({
             >
               <ExitToAppIcon />
             </Button>
-          </div>
-        </div>
+          </div> */}
+        <CardHeader title="Chat" minimize={minimize} showLogout={true} />
+
         {susbcriptionLoading && (
           <Typography
             component="h2"
