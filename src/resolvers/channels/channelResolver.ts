@@ -1,25 +1,22 @@
+import { ObjectId } from "bson";
 import {
   Arg,
   Ctx,
   Mutation,
+  Publisher,
+  PubSub,
   Query,
   Resolver,
-  PubSub,
-  Publisher,
-  Subscription,
-  Root
+  Root,
+  Subscription
 } from "type-graphql";
-
-import { MyContext } from "../../schema/MyContext";
-
-import { Channel } from "../../entity/Channels";
 import { getMongoRepository } from "typeorm";
+import { NEW_CHANNEL_CREATED_NOTIFICATION } from "../../constants";
+import { Channel } from "../../entity/Channels";
+import { Guest } from "../../entity/Guest";
 import { Notification, NotificationPayload } from "../../entity/Notification";
 import { User } from "../../entity/User";
-import { ObjectId } from "bson";
-import { Guest } from "../../entity/Guest";
-
-export const NEW_CHANNEL_NOTIFICATION = "NEW_CHANNEL_NOTIFICATION";
+import { MyContext } from "../../schema/MyContext";
 
 @Resolver(Channel)
 export class ChannelResolver {
@@ -29,7 +26,7 @@ export class ChannelResolver {
   async createChannel(
     @Ctx() ctx: MyContext,
     @Arg("name") name: string,
-    @PubSub(NEW_CHANNEL_NOTIFICATION)
+    @PubSub(NEW_CHANNEL_CREATED_NOTIFICATION)
     publish: Publisher<NotificationPayload>
   ): Promise<Channel> {
     try {
@@ -67,20 +64,19 @@ export class ChannelResolver {
   }
 
   @Subscription(() => Notification, {
-    topics: NEW_CHANNEL_NOTIFICATION
+    topics: NEW_CHANNEL_CREATED_NOTIFICATION
     // filter: ({ payload, args }) => args.priorities.includes(payload.priority),
   })
   async newChannelNotification(
-    @Root() notificationPayload: NotificationPayload,
+    @Root() notificationPayload: NotificationPayload
     // @Args() args: NewNotificationsArgs,
-    @Ctx() ctx: MyContext
+    // @Ctx() ctx: MyContext
   ): Promise<Notification> {
     const { userId } = notificationPayload;
     if (userId) {
-      const id = new ObjectId(userId);
       let user: User | Guest | undefined;
 
-      user = await ctx.userLoader.load(id as any);
+      user = await User.findOne(userId);
 
       if (!user) {
         user = await Guest.findOne(userId);

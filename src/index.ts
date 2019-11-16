@@ -1,6 +1,6 @@
-import "reflect-metadata"
-import "./utils/env"
+import "reflect-metadata";
+import "./utils/env";
 
-import app from "./app"
+import app from "./app";
 
-app()
+app();

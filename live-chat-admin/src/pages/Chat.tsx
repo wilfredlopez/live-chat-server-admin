@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 // import ChatBox from "../components/Chat/ChatBox"
 import {
-  useNewMessageSubscriptionSubscription,
+  useNewChannelNotificationSubscriptionSubscription,
   User,
   Maybe,
   useSendMessageMutaionMutation,
-  useMeQuery
+  useMeQuery,
+  useNewMessageSubscriptionSubscription
 } from "../generated/apolloComponents";
 // import { Typography } from "@material-ui/core"
 import ChatContent from "../components/Chat/ChatContent";
@@ -43,24 +44,49 @@ const Chat: React.FC<Props> = () => {
   const [channelId, setChannelId] = useState<string | null>(null);
   const me = useMeQuery();
 
-  const { data, loading } = useNewMessageSubscriptionSubscription();
+  const { data, loading } = useNewChannelNotificationSubscriptionSubscription();
+
+  const newMessageSub = useNewMessageSubscriptionSubscription();
 
   useEffect(() => {
-    if (data && data.newMessageNotification) {
-      const newMessage: Imessage = {
-        date: data.newMessageNotification.date,
-        id: data.newMessageNotification.id,
-        message: data.newMessageNotification.message,
-        user: data.newMessageNotification.user
-      };
+    //sets the channel id and message when a new channel is created and if channelId is currently null
+    if (!channelId) {
+      if (data && data.newChannelNotification) {
+        const newMessage: Imessage = {
+          date: data.newChannelNotification.date,
+          id: data.newChannelNotification.id,
+          message: data.newChannelNotification.message,
+          user: data.newChannelNotification.user
+        };
 
-      const updatedMessages = [...messages];
-      setChannelId(data.newMessageNotification.channelId);
-      updatedMessages.push(newMessage);
-      setMessages(updatedMessages);
+        const updatedMessages = [...messages];
+        setChannelId(data.newChannelNotification.channelId);
+        updatedMessages.push(newMessage);
+        setMessages(updatedMessages);
+      }
     }
     // eslint-disable-next-line
-  }, [data]);
+  }, [data, channelId]);
+
+  useEffect(() => {
+    //updates the messages when user sends a message to the current channelId
+    if (channelId) {
+      if (newMessageSub.data && newMessageSub.data.newMessageNotification) {
+        const newMessage: Imessage = {
+          date: newMessageSub.data.newMessageNotification.date,
+          id: newMessageSub.data.newMessageNotification.id,
+          message: newMessageSub.data.newMessageNotification.message,
+          user: newMessageSub.data.newMessageNotification.user
+        };
+
+        const updatedMessages = [...messages];
+        // setChannelId(newMessageSub.data.newMessageNotification.channelId);
+        updatedMessages.push(newMessage);
+        setMessages(updatedMessages);
+      }
+    }
+    // eslint-disable-next-line
+  }, [newMessageSub.data]);
 
   // const sendMessage = async (
   //   event: React.FormEvent<HTMLFormElement>,

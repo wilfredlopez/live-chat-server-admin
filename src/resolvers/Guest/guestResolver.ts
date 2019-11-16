@@ -5,16 +5,18 @@ import {
   Query,
   Resolver,
   Publisher,
-  PubSub,
-} from "type-graphql"
-import { Channel } from "../../entity/Channels"
-import { Guest, GuestInputType } from "../../entity/Guest"
-import { MyContext } from "../../schema/MyContext"
-import { createGuestToken } from "../../utils/createToken"
-import { SendCookies } from "../../utils/sendCookies"
+  PubSub
+} from "type-graphql";
+import { Channel } from "../../entity/Channels";
+import { Guest, GuestInputType } from "../../entity/Guest";
+import { MyContext } from "../../schema/MyContext";
+import { createGuestToken } from "../../utils/createToken";
+import { SendCookies } from "../../utils/sendCookies";
 
-import { CHANNEL_MESSAGE_NOTIFICATION } from "../message/messageResolver"
-import { NotificationPayload } from "../../entity/Notification"
+import Gravatar from "gravatar";
+
+import { NotificationPayload } from "../../entity/Notification";
+import { NEW_CHANNEL_CREATED_NOTIFICATION } from "../../constants";
 
 @Resolver(Guest)
 export class GuestResolver {
@@ -23,41 +25,44 @@ export class GuestResolver {
     @Arg("guestInputType")
     { email, firstname, lastname }: GuestInputType,
     @Ctx() ctx: MyContext,
-    @PubSub(CHANNEL_MESSAGE_NOTIFICATION)
-    publish: Publisher<NotificationPayload>,
+    // @PubSub(CHANNEL_MESSAGE_NOTIFICATION)
+    @PubSub(NEW_CHANNEL_CREATED_NOTIFICATION)
+    publish: Publisher<NotificationPayload>
   ): Promise<Guest> {
     try {
       const guest = await Guest.findOne({
         where: {
-          email: email.toLowerCase(),
-        },
-      })
+          email: email.toLowerCase()
+        }
+      });
       if (guest) {
-        guest.firstName = firstname
-        guest.lastName = lastname
-        await guest.save()
-        const { accessToken, refreshToken } = createGuestToken(guest)
+        guest.firstName = firstname;
+        guest.lastName = lastname;
+        await guest.save();
+        const { accessToken, refreshToken } = createGuestToken(guest);
 
-        SendCookies(ctx.res, accessToken, refreshToken)
+        SendCookies(ctx.res, accessToken, refreshToken);
 
-        guest.token = accessToken
-        await guest.save()
+        guest.token = accessToken;
+        await guest.save();
 
         await publish({
           message: "new channel created",
           id: guest.channelId as any,
           channelId: guest.channelId,
-          userId: guest.id.toString(),
-        })
+          userId: guest.id.toString()
+        });
 
-        return guest //if guest alreay exists
+        return guest; //if guest alreay exists
       } else {
         const newChannel = await Channel.create({
           name: email.toLowerCase(),
-          users: [],
-        }).save()
+          users: []
+        }).save();
 
         // console.log(newChannel.id)
+
+        const avatar = Gravatar.url(email.toLowerCase());
 
         const guest = await Guest.create({
           email: email.toLowerCase(),
@@ -65,39 +70,40 @@ export class GuestResolver {
           lastName: lastname,
           count: 0,
           avatar:
-            "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg",
-        }).save()
+            avatar ||
+            "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg"
+        }).save();
 
-        const { accessToken, refreshToken } = createGuestToken(guest)
-        SendCookies(ctx.res, accessToken, refreshToken)
+        const { accessToken, refreshToken } = createGuestToken(guest);
+        SendCookies(ctx.res, accessToken, refreshToken);
 
-        guest.channelId = newChannel.id.toString()
-        guest.token = accessToken
+        guest.channelId = newChannel.id.toString();
+        guest.token = accessToken;
 
         await publish({
           message: newChannel.name,
           id: newChannel.id,
           channelId: newChannel.id.toString(),
-          userId: guest.id.toString(),
-        })
+          userId: guest.id.toString()
+        });
 
         // console.log(guest)
 
-        await guest.save()
+        await guest.save();
 
-        return guest
+        return guest;
       }
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
   //just for dev
   @Query(returns => [Guest])
-  async getAllGuests(@Ctx() {  }: MyContext): Promise<Array<Guest>> {
-    const guests = await Guest.find()
-    return guests
+  async getAllGuests(@Ctx() {}: MyContext): Promise<Array<Guest>> {
+    const guests = await Guest.find();
+    return guests;
   }
 
   @Query(() => Guest, { nullable: true })
@@ -105,10 +111,10 @@ export class GuestResolver {
     // const request = ctx.req as any
 
     //@ts-ignore
-    let { userId } = ctx.req
+    let { userId } = ctx.req;
 
     if (!userId) {
-      return undefined
+      return undefined;
     }
 
     // //@ts-ignore
@@ -120,7 +126,7 @@ export class GuestResolver {
 
     // const id = new ObjectID(userId)
     // const user = await ctx.userLoader.load(id as any)
-    const user = await Guest.findOneOrFail(userId)
+    const user = await Guest.findOneOrFail(userId);
     // console.log(user)
     //do it with email
     // const user = await User.findOne({
@@ -129,11 +135,11 @@ export class GuestResolver {
     //   },
     // })
     if (user) {
-      return user
+      return user;
     } else {
-      return undefined
+      return undefined;
     }
   }
 }
 
-export default GuestResolver
+export default GuestResolver;

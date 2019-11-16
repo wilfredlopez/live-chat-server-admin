@@ -12,22 +12,22 @@ import {
   Query,
   Resolver,
   Root,
-  Subscription,
-} from "type-graphql"
-import { Message, MessageInputType } from "../../entity/Message"
-import { Notification, NotificationPayload } from "../../entity/Notification"
-import { MyContext } from "../../schema/MyContext"
-import { User } from "../../entity/User"
-
-import { Guest } from "../../entity/Guest"
-
-export const NEW_MESSAGE_NOTIFICATION = "NEW_MESSAGE_NOTIFICATION"
-export const CHANNEL_MESSAGE_NOTIFICATION = "CHANNEL_MESSAGE_NOTIFICATION"
+  Subscription
+} from "type-graphql";
+import {
+  CHANNEL_MESSAGE_NOTIFICATION,
+  NEW_CHANNEL_CREATED_NOTIFICATION
+} from "../../constants";
+import { Guest } from "../../entity/Guest";
+import { Message, MessageInputType } from "../../entity/Message";
+import { Notification, NotificationPayload } from "../../entity/Notification";
+import { User } from "../../entity/User";
+import { MyContext } from "../../schema/MyContext";
 
 @ArgsType()
 export class NewNotificationsArgs {
   @Field(type => ID)
-  channelId: string
+  channelId: string;
 }
 
 @Resolver(Message)
@@ -37,12 +37,12 @@ export class MessageResolver {
 
   @Query(() => [Message])
   async getAllMessages(): Promise<Message[]> {
-    const me = Message.find()
+    const me = Message.find();
 
     // Message.delete({
     //   hasId: true,
     // })
-    return me
+    return me;
   }
 
   @Mutation(returns => Message)
@@ -51,15 +51,15 @@ export class MessageResolver {
     @Ctx() ctx: MyContext,
     @Arg("messageInput") input: MessageInputType,
     @PubSub(CHANNEL_MESSAGE_NOTIFICATION)
-    publish: Publisher<NotificationPayload>,
+    publish: Publisher<NotificationPayload>
   ): Promise<Message> {
     try {
-      const { userId } = input
+      const { userId } = input;
       // if(!userId){
       //     throw new Error
       // }
       //   const messageRepo = getMongoRepository(Message)
-      const { channelId, text } = input
+      const { channelId, text } = input;
 
       //   const channel = await Channel.findOneOrFail(channelId)
       //   messageRepo.dropCollectionIndexes()
@@ -67,97 +67,133 @@ export class MessageResolver {
         message: text,
         channelId: channelId,
         userId: userId,
-        date: new Date(Date.now()),
-      })
+        date: new Date(Date.now())
+      });
 
       //   const channel = Channel.create<Channel>({ name: name, users: [] })
 
-      await message.save()
+      await message.save();
       await publish({
         message: message.message,
         id: message.id,
         channelId: channelId,
-        userId: userId,
-      })
+        userId: userId
+      });
 
-      return message
+      return message;
     } catch (e) {
-      console.log(e)
-      throw new Error(e)
+      console.log(e);
+      throw new Error(e);
     }
   }
 
   @Subscription(() => Notification, {
-    topics: CHANNEL_MESSAGE_NOTIFICATION,
+    topics: CHANNEL_MESSAGE_NOTIFICATION
     // filter: ({ payload, args }) => args.priorities.includes(payload.priority),
   })
   async newMessageNotification(
     @Root() notificationPayload: NotificationPayload,
     // @Args() args: NewNotificationsArgs,
-    @Ctx() ctx: MyContext,
+    @Ctx() ctx: MyContext
   ): Promise<Notification> {
     //@ts-ignore
-    const { userId } = notificationPayload
+    const { userId } = notificationPayload;
     if (userId) {
-      let user: User | Guest | undefined
+      let user: User | Guest | undefined;
 
-      user = await User.findOne(userId)
+      user = await User.findOne(userId);
 
       if (!user) {
-        user = await Guest.findOne(userId)
+        user = await Guest.findOne(userId);
       }
 
       if (user) {
         return {
           ...notificationPayload,
           date: new Date(),
-          user: user,
-        }
+          user: user
+        };
       }
     }
 
     return {
       ...notificationPayload,
       date: new Date(),
-      user: null,
-    }
+      user: null
+    };
   }
 
   @Subscription(() => Notification, {
     topics: CHANNEL_MESSAGE_NOTIFICATION,
     filter: ({ payload, args }) => {
-      return args.channelId === payload.channelId
-    },
+      return args.channelId === payload.channelId;
+    }
   })
   async channelMessageNotification(
     @Root() notificationPayload: NotificationPayload,
-    @Args() args: NewNotificationsArgs,
+    @Args() args: NewNotificationsArgs
   ): Promise<Notification> {
-    const { userId } = notificationPayload
+    const { userId } = notificationPayload;
     if (userId) {
-      let user: User | Guest | undefined
+      let user: User | Guest | undefined;
 
-      user = await User.findOne(userId)
+      user = await User.findOne(userId);
 
       if (!user) {
-        user = await Guest.findOne(userId)
+        user = await Guest.findOne(userId);
       }
 
       if (user) {
         return {
           ...notificationPayload,
           date: new Date(),
-          user: user,
-        }
+          user: user
+        };
       }
     }
 
     return {
       ...notificationPayload,
       date: new Date(),
-      user: null,
+      user: null
+    };
+  }
+
+  @Subscription(() => Notification, {
+    topics: NEW_CHANNEL_CREATED_NOTIFICATION,
+    filter: ({ payload, args }) => {
+      return args.channelId === payload.channelId;
     }
+  })
+  async channelCreatedNotification(
+    @Root() notificationPayload: NotificationPayload,
+    @Args() args: NewNotificationsArgs
+  ): Promise<Notification> {
+    const { userId } = notificationPayload;
+    if (userId) {
+      let user: User | Guest | undefined;
+
+      user = await User.findOne(userId);
+
+      if (!user) {
+        user = await Guest.findOne(userId);
+      }
+
+      if (user) {
+        return {
+          ...notificationPayload,
+          date: new Date(),
+          user: user
+        };
+      }
+    }
+
+    return {
+      ...notificationPayload,
+      date: new Date(),
+      user: null
+    };
   }
 }
 
-export default MessageResolver
+export default MessageResolver;

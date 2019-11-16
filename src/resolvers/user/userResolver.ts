@@ -9,6 +9,7 @@ import { ObjectID } from "bson";
 import { getMongoRepository } from "typeorm";
 import { JWT_SECRET } from "../../utils/env";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
+import Gravatar from "gravatar";
 
 @Resolver(User)
 export class UserResolver {
@@ -22,6 +23,8 @@ export class UserResolver {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       //   await this.recipeService.removeById(id);
+
+      const gravatar = Gravatar.url(email.toLowerCase());
       const user = await User.create({
         email: email.toLowerCase(),
         password: hashedPassword,
@@ -38,7 +41,8 @@ export class UserResolver {
         maxChatsAtATime: 3,
         avatar: avatar
           ? avatar
-          : "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg"
+          : gravatar ||
+            "https://cdn4.vectorstock.com/i/1000x1000/77/43/young-man-head-avatar-cartoon-face-character-vector-21757743.jpg"
       }).save();
 
       return user;

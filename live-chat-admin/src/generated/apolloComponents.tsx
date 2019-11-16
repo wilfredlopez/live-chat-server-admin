@@ -85,8 +85,8 @@ export type Mutation = {
    __typename?: 'Mutation',
   createChannel: Channel,
   fileUpload: Scalars['Boolean'],
-  sendMessage: Message,
   registerGuestOrLogin: Guest,
+  sendMessage: Message,
   changePassword?: Maybe<User>,
   forgotPassword: Scalars['Boolean'],
   invalidateTokens: Scalars['Boolean'],
@@ -109,13 +109,13 @@ export type MutationFileUploadArgs = {
 };
 
 
-export type MutationSendMessageArgs = {
-  messageInput: MessageInputType
+export type MutationRegisterGuestOrLoginArgs = {
+  guestInputType: GuestInputType
 };
 
 
-export type MutationRegisterGuestOrLoginArgs = {
-  guestInputType: GuestInputType
+export type MutationSendMessageArgs = {
+  messageInput: MessageInputType
 };
 
 
@@ -157,9 +157,9 @@ export type Query = {
    __typename?: 'Query',
   getAllChannels: Array<Channel>,
   files: Array<Scalars['String']>,
-  getAllMessages: Array<Message>,
   getAllGuests: Array<Guest>,
   guestMe?: Maybe<Guest>,
+  getAllMessages: Array<Message>,
   test: Scalars['String'],
   me?: Maybe<User>,
   AmIAuthorized?: Maybe<Scalars['Boolean']>,
@@ -171,10 +171,16 @@ export type Subscription = {
   newChannelNotification: Notification,
   newMessageNotification: Notification,
   channelMessageNotification: Notification,
+  channelCreatedNotification: Notification,
 };
 
 
 export type SubscriptionChannelMessageNotificationArgs = {
+  channelId: Scalars['ID']
+};
+
+
+export type SubscriptionChannelCreatedNotificationArgs = {
   channelId: Scalars['ID']
 };
 
@@ -232,6 +238,21 @@ export type SendMessageMutaionMutation = (
   & { sendMessage: (
     { __typename?: 'Message' }
     & Pick<Message, 'id' | 'message' | 'userId' | 'channelId'>
+    & { user: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'avatar' | 'email'>
+    )> }
+  ) }
+);
+
+export type NewChannelNotificationSubscriptionSubscriptionVariables = {};
+
+
+export type NewChannelNotificationSubscriptionSubscription = (
+  { __typename?: 'Subscription' }
+  & { newChannelNotification: (
+    { __typename?: 'Notification' }
+    & Pick<Notification, 'id' | 'message' | 'date' | 'channelId'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'avatar' | 'email'>
@@ -353,6 +374,45 @@ export function withSendMessageMutaion<TProps, TChildProps = {}>(operationOption
 export type SendMessageMutaionMutationHookResult = ReturnType<typeof useSendMessageMutaionMutation>;
 export type SendMessageMutaionMutationResult = ApolloReactCommon.MutationResult<SendMessageMutaionMutation>;
 export type SendMessageMutaionMutationOptions = ApolloReactCommon.BaseMutationOptions<SendMessageMutaionMutation, SendMessageMutaionMutationVariables>;
+export const NewChannelNotificationSubscriptionDocument = gql`
+    subscription NewChannelNotificationSubscription {
+  newChannelNotification {
+    id
+    message
+    date
+    channelId
+    user {
+      id
+      name
+      avatar
+      email
+    }
+  }
+}
+    `;
+export type NewChannelNotificationSubscriptionComponentProps = Omit<ApolloReactComponents.SubscriptionComponentOptions<NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables>, 'subscription'>;
+
+    export const NewChannelNotificationSubscriptionComponent = (props: NewChannelNotificationSubscriptionComponentProps) => (
+      <ApolloReactComponents.Subscription<NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables> subscription={NewChannelNotificationSubscriptionDocument} {...props} />
+    );
+    
+export type NewChannelNotificationSubscriptionProps<TChildProps = {}> = ApolloReactHoc.DataProps<NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables> & TChildProps;
+export function withNewChannelNotificationSubscription<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  NewChannelNotificationSubscriptionSubscription,
+  NewChannelNotificationSubscriptionSubscriptionVariables,
+  NewChannelNotificationSubscriptionProps<TChildProps>>) {
+    return ApolloReactHoc.withSubscription<TProps, NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables, NewChannelNotificationSubscriptionProps<TChildProps>>(NewChannelNotificationSubscriptionDocument, {
+      alias: 'newChannelNotificationSubscription',
+      ...operationOptions
+    });
+};
+
+    export function useNewChannelNotificationSubscriptionSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables>) {
+      return ApolloReactHooks.useSubscription<NewChannelNotificationSubscriptionSubscription, NewChannelNotificationSubscriptionSubscriptionVariables>(NewChannelNotificationSubscriptionDocument, baseOptions);
+    }
+export type NewChannelNotificationSubscriptionSubscriptionHookResult = ReturnType<typeof useNewChannelNotificationSubscriptionSubscription>;
+export type NewChannelNotificationSubscriptionSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewChannelNotificationSubscriptionSubscription>;
 export const NewMessageSubscriptionDocument = gql`
     subscription NewMessageSubscription {
   newMessageNotification {
