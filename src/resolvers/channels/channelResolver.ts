@@ -76,6 +76,9 @@ export class ChannelResolver {
     if (userId) {
       let user: User | Guest | undefined;
 
+      //TODO
+      //I NEED TO FIND A WAY TO REDIRECT THIS NOTIFICATION TO JUST ONE AVAILABLE CUSTOMER SERVICE USER
+
       user = await User.findOne(userId);
 
       if (!user) {

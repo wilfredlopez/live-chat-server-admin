@@ -98,7 +98,7 @@ const ChatBox: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="formButtonContainer">
+      <div className="formButtonContainer" style={{ background: "white" }}>
         <form
           onSubmit={e => {
             e.preventDefault();

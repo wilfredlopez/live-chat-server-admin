@@ -27,11 +27,14 @@ const TextInputField: React.FunctionComponent<ITextInputFieldProps> = ({
           label={placeholder}
           fullWidth
           variant="outlined"
+          style={{
+            background: "white"
+          }}
         />
 
         {errorMessage && (
-          <div>
-            <p style={{ color: "red", lineHeight: 0.5 }}>{errorMessage}</p>
+          <div style={{ paddingBottom: "2px" }}>
+            <p style={{ color: "red", lineHeight: 0.8 }}>{errorMessage}</p>
           </div>
         )}
       </div>

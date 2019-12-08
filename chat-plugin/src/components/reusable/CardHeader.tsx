@@ -4,6 +4,8 @@ import MinimizeIcon from "@material-ui/icons/Minimize";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MessagesContext from "../context/messagesContext";
 
+import { Settings } from "@material-ui/icons";
+
 interface ICardHeaderProps {
   minimize: () => void;
   showLogout?: boolean;
@@ -25,15 +27,27 @@ const CardHeader: React.FunctionComponent<ICardHeaderProps> = ({
         justifyContent: "space-between",
         display: "flex",
         alignItems: "center",
-        border: "1px solid #f4f4f4"
+        border: "1px solid #f4f4f4",
+        background: "white"
       }}
     >
+      <div>
+        <Button
+          // onClick={() => minimize()}
+          variant="text"
+          size="small"
+          title="Minimize"
+          // style={{ height: "40px" }}
+        >
+          <Settings />
+        </Button>
+      </div>
       <h1
         style={{
           textAlign: "center",
           padding: "0",
           margin: "0.4em",
-          fontSize: "1.8rem"
+          fontSize: "1rem"
         }}
       >
         {title}
@@ -41,7 +55,7 @@ const CardHeader: React.FunctionComponent<ICardHeaderProps> = ({
       <div>
         <Button
           onClick={() => minimize()}
-          variant="outlined"
+          variant="text"
           size="small"
           title="Minimize"
           // style={{ height: "40px" }}
@@ -54,7 +68,7 @@ const CardHeader: React.FunctionComponent<ICardHeaderProps> = ({
             title="Close"
             size="small"
             // color="primary"
-            variant="outlined"
+            variant="text"
             style={{ color: "red" }}
           >
             <ExitToAppIcon />

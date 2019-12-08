@@ -53,13 +53,13 @@ const Login: React.FC<ILoginFormProps> = ({ minimize }) => {
       <div className="wl-chatOrLoginScreen">
         <div
           style={{
-            background: "white"
+            background: "#fefefe"
             // padding: "1rem",
             // borderRadius: "1rem",
             // border: "1px solid #deded3"
           }}
         >
-          <CardHeader minimize={minimize} title="Chat With Us!" />
+          <CardHeader minimize={minimize} title="Live Chat" />
           <div style={{ padding: "1rem" }}>
             <RegisterGuestOrLoginMutationComponent>
               {(mutate, loginResponse) => {
@@ -156,6 +156,8 @@ const Login: React.FC<ILoginFormProps> = ({ minimize }) => {
                           <Button
                             type="submit"
                             variant="contained"
+                            fullWidth
+                            color="primary"
                             disabled={loginResponse.loading}
                           >
                             Start Chat

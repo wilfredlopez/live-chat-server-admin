@@ -1,15 +1,35 @@
 import bcrypt from "bcryptjs";
-import { Arg, Ctx, Mutation, Query, Resolver, Authorized } from "type-graphql";
+import { ObjectID } from "bson";
+import Gravatar from "gravatar";
+import { verify } from "jsonwebtoken";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  Mutation,
+  Publisher,
+  PubSub,
+  Query,
+  Resolver,
+  Root,
+  Subscription
+} from "type-graphql";
+import { getMongoRepository } from "typeorm";
+import {
+  ACCESS_TOKEN,
+  AVAILABLE_USERS_NOTIFICATION,
+  REFRESH_TOKEN
+} from "../../constants";
+import {
+  AvailableUsersNotification,
+  AvailableUsersPayload
+} from "../../entity/Notification";
 import { User, UserInputType, UserLoginInput } from "../../entity/User";
 import { MyContext } from "../../schema/MyContext";
 import { createToken } from "../../utils/createToken";
-import { verify } from "jsonwebtoken";
-import { SendCookies } from "../../utils/sendCookies";
-import { ObjectID } from "bson";
-import { getMongoRepository } from "typeorm";
 import { JWT_SECRET } from "../../utils/env";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
-import Gravatar from "gravatar";
+import getAvailableUsers from "../../utils/getAvailableUsers";
+import { SendCookies } from "../../utils/sendCookies";
 
 @Resolver(User)
 export class UserResolver {
@@ -96,7 +116,11 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean!)
-  async setAvailable(@Ctx() ctx: MyContext): Promise<boolean> {
+  async setAvailable(
+    @Ctx() ctx: MyContext,
+    @PubSub(AVAILABLE_USERS_NOTIFICATION)
+    publish: Publisher<AvailableUsersPayload>
+  ): Promise<boolean> {
     //@ts-ignore
     if (!ctx.req.userId) {
       return false;
@@ -115,6 +139,13 @@ export class UserResolver {
           time: new Date(Date.now())
         };
         await user.save();
+
+        const availableUsers = await getAvailableUsers();
+
+        publish({
+          users: availableUsers
+        });
+
         return true;
       } catch (error) {
         console.log(error);
@@ -124,7 +155,11 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean!)
-  async setUnavailable(@Ctx() ctx: MyContext): Promise<boolean> {
+  async setUnavailable(
+    @Ctx() ctx: MyContext,
+    @PubSub(AVAILABLE_USERS_NOTIFICATION)
+    publish: Publisher<AvailableUsersPayload>
+  ): Promise<boolean> {
     //@ts-ignore
     const { userId } = ctx.req;
     if (!userId) {
@@ -142,6 +177,13 @@ export class UserResolver {
           time: new Date(Date.now())
         };
         await user.save();
+
+        const availableUsers = await getAvailableUsers();
+
+        publish({
+          users: availableUsers
+        });
+
         return true;
       } catch (error) {
         return false;
@@ -184,7 +226,11 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx() ctx: MyContext): Promise<Boolean> {
+  async logout(
+    @Ctx() ctx: MyContext,
+    @PubSub(AVAILABLE_USERS_NOTIFICATION)
+    publish: Publisher<AvailableUsersPayload>
+  ): Promise<Boolean> {
     try {
       //@ts-ignore
       let { userId } = ctx.req;
@@ -195,6 +241,11 @@ export class UserResolver {
         time: new Date(Date.now())
       };
       await user.save();
+      const availableUsers = await getAvailableUsers();
+
+      publish({
+        users: availableUsers
+      });
     } catch (error) {}
 
     ctx.res.clearCookie(ACCESS_TOKEN);
@@ -238,6 +289,25 @@ export class UserResolver {
   async getAllUsers(@Ctx() {}: MyContext) {
     const users = await User.find();
     return users;
+  }
+
+  @Query(returns => [User])
+  async queryAvailableUsers(@Ctx() {}: MyContext) {
+    return getAvailableUsers();
+  }
+
+  @Subscription(() => AvailableUsersNotification, {
+    topics: AVAILABLE_USERS_NOTIFICATION
+    // filter: ({ payload, args }) => args.priorities.includes(payload.priority),
+  })
+  async availableUsers(
+    @Root() availableUsersPayload: AvailableUsersPayload
+    // @Args() args: NewNotificationsArgs,
+    // @Ctx() ctx: MyContext
+  ): Promise<AvailableUsersNotification> {
+    return {
+      ...availableUsersPayload
+    };
   }
 }
 

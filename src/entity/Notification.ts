@@ -29,3 +29,13 @@ export interface NotificationPayload {
   channelId: string;
   userId: string;
 }
+
+export interface AvailableUsersPayload {
+  users: User[];
+}
+
+@ObjectType()
+export class AvailableUsersNotification {
+  @Field(type => [User], { nullable: true })
+  users: User[];
+}

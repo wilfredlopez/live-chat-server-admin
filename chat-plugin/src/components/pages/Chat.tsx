@@ -86,7 +86,7 @@ const Chat: React.FC<Props> = ({
     // <div className="chat-container-class">
     <div className="wl-chatOrLoginScreen">
       {/* <Container maxWidth="sm"> */}
-      <div style={{ background: "white" }}>
+      <div style={{ background: "#fefefe" }}>
         {/* <Typography component="h1" variant="h4" align="center">
             Chat
           </Typography>
